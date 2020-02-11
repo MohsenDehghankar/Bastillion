@@ -73,9 +73,8 @@
                 $('#' + [[${sortedSet.orderByField}]]).attr('class', [[${sortedSet.orderByDirection}]]);
             [/]
 
-            [# th:if= "${session.privateKey != null}"]
-                window.location = '../admin/downloadPvtKey.ktrl?publicKey.keyNm=' + [[${param.keyNm}]] + '&_csrf=' + [[${session._csrf}]];
-            [/]
+
+
 
             $('.new_key_label a').click(function () {
                 hideNewKeyInputs();

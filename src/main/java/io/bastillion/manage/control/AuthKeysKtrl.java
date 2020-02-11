@@ -159,6 +159,12 @@ public class AuthKeysKtrl extends BaseKontroller {
 
         publicKey.setUserId(userId);
 
+        // not available for ADMIN
+        if(Auth.ADMINISTRATOR.equals(userType)) {
+            return "redirect:/admin/viewKeys.ktrl";
+        }
+
+
 
         if (Auth.MANAGER.equals(userType) || UserProfileDB.checkIsUsersProfile(userId, publicKey.getProfile().getId())) {
             if (publicKey.getId() != null) {
@@ -192,6 +198,12 @@ public class AuthKeysKtrl extends BaseKontroller {
 
         String privateKey = EncryptionUtil.decrypt((String) getRequest().getSession().getAttribute(PVT_KEY));
 
+        // not available for ADMIN
+        String userType = AuthUtil.getUserType(getRequest().getSession());
+        if (Auth.ADMINISTRATOR.equals(userType)){
+            return null;
+        }
+
         if (StringUtils.isNotEmpty(publicKey.getKeyNm()) && StringUtils.isNotEmpty(privateKey)) {
             try {
 
@@ -219,6 +231,12 @@ public class AuthKeysKtrl extends BaseKontroller {
      * @return public key
      */
     public String generateUserKey(String username, String keyname) {
+
+        // not available for ADMIN
+        String userType = AuthUtil.getUserType(getRequest().getSession());
+        if (Auth.ADMINISTRATOR.equals(userType)){
+            return null;
+        }
 
         //set key type
         int type = KeyPair.RSA;
@@ -260,6 +278,7 @@ public class AuthKeysKtrl extends BaseKontroller {
     public void validateSavePublicKeys() {
 
         Long userId = AuthUtil.getUserId(getRequest().getSession());
+
 
         if (publicKey == null
                 || publicKey.getKeyNm() == null
