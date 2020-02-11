@@ -60,6 +60,7 @@ public class DSPool {
      */
 
     public static BasicDataSource getDataSource() {
+
         if (dsPool == null) {
             dsPool = registerDataSource();
         }

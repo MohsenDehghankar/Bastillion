@@ -27,7 +27,10 @@
  */
 package io.bastillion.manage.util;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import org.slf4j.Logger;
@@ -53,6 +56,18 @@ public class DBUtils {
         Connection con = null;
         try{
             con=DSPool.getDataSource().getConnection();
+
+
+            // testing database
+            PreparedStatement stms = con.prepareStatement("select * from terminal_log");
+            ResultSet rs = stms.executeQuery();
+            FileWriter file = new FileWriter("database-test-result.txt");
+            while (rs.next()){
+                file.write(rs.getString("output"));
+            }
+            file.flush();
+            file.close();
+            //
 
         } catch (Exception ex) {
             log.error(ex.toString(), ex);

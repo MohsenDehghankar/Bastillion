@@ -224,6 +224,8 @@ public class UserDB {
             stmt.setLong(1, userId);
             ResultSet rs = stmt.executeQuery();
 
+
+
             while (rs.next()) {
                 user = new User();
                 user.setId(rs.getLong("id"));
@@ -274,7 +276,7 @@ public class UserDB {
             DBUtils.closeConn(con);
         }
 
-        // TODO: 2/11/20
+        // add default script
         if (Auth.MANAGER.equals(user.getUserType())){
             ScriptDB.addManagerDefaultScript(userId);
         }
