@@ -1,0 +1,4 @@
+1. SSH key generation only available for Managers. (when having private-key, one can generate his own keys (??) and add to server)
+    * creating a predefined script to check /.ssh/authorized_keys
+
+2.
