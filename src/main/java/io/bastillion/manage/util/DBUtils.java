@@ -58,16 +58,16 @@ public class DBUtils {
             con=DSPool.getDataSource().getConnection();
 
 
-            // testing database
-            PreparedStatement stms = con.prepareStatement("select * from terminal_log");
-            ResultSet rs = stms.executeQuery();
-            FileWriter file = new FileWriter("database-test-result.txt");
-            while (rs.next()){
-                file.write(rs.getString("output"));
-            }
-            file.flush();
-            file.close();
-            //
+//            // testing database
+//            PreparedStatement stms = con.prepareStatement("select * from terminal_log");
+//            ResultSet rs = stms.executeQuery();
+//            FileWriter file = new FileWriter("database-test-result.txt");
+//            while (rs.next()){
+//                file.write(rs.getString("output"));
+//            }
+//            file.flush();
+//            file.close();
+//            //
 
         } catch (Exception ex) {
             log.error(ex.toString(), ex);
