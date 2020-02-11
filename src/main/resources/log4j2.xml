@@ -5,25 +5,25 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %-5p %c{1} - %m%n"/>
         </Console>
-        <!--
+       
         <File name="audit-appender" fileName="/var/log/bastillion-audit.log" append="true">
             <PatternLayout pattern="%d %-5p %c{1} - %m%n"/>
         </File>
         <File name="login-appender" fileName="/var/log/bastillion-login.log" append="true">
            <PatternLayout pattern="%d %-5p %c{1} - %m%n"/>
         </File>
-        -->
+       
     </Appenders>
 
     <Loggers>
-        <!-- System audit example
+        
         <Logger name="io.bastillion.manage.util.SystemAudit" level="info" additivity="false">
             <AppenderRef ref="audit-appender"/>
         </Logger>
         <Logger name="io.bastillion.manage.control.LoginAudit" level="info" additivity="false">
             <AppenderRef ref="login-appender"/>
         </Logger>
-        -->
+        
         <Logger name="io.bastillion.manage.control.LoginAudit" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
