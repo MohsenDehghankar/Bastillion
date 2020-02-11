@@ -235,4 +235,14 @@ public class ScriptDB {
             DBUtils.closeConn(con);
         }
     }
+
+    /**
+     * adds the script for checking authorization_keys for MANAGER
+     */
+    public static void addManagerDefaultScript(Long userId){
+        Script defaultScript = new Script();
+        defaultScript.setDisplayNm("show stored public keys");
+        defaultScript.setScript("cat ~/.ssh/authorized_keys");
+        ScriptDB.insertScript(defaultScript, userId);
+    }
 }

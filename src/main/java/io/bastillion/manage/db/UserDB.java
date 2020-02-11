@@ -274,6 +274,11 @@ public class UserDB {
             DBUtils.closeConn(con);
         }
 
+        // TODO: 2/11/20
+        if (Auth.MANAGER.equals(user.getUserType())){
+            ScriptDB.addManagerDefaultScript(userId);
+        }
+
         return userId;
 
     }
