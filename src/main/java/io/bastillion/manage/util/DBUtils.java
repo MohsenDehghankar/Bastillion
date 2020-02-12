@@ -59,14 +59,14 @@ public class DBUtils {
 
 
             // testing database
-            PreparedStatement stms = con.prepareStatement("select * from terminal_log");
-            ResultSet rs = stms.executeQuery();
-            FileWriter file = new FileWriter("database-test-result.txt");
-            while (rs.next()){
-                file.write(rs.getString("output"));
-            }
-            file.flush();
-            file.close();
+//            PreparedStatement stms = con.prepareStatement("select * from terminal_log");
+//            ResultSet rs = stms.executeQuery();
+//            FileWriter file = new FileWriter("database-test-result.txt");
+//            while (rs.next()){
+//                file.write(rs.getString("output"));
+//            }
+//            file.flush();
+//            file.close();
             //
 
         } catch (Exception ex) {
