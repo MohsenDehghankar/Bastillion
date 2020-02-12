@@ -58,7 +58,7 @@ public class DBUtils {
             con=DSPool.getDataSource().getConnection();
 
 
-//            // testing database
+            // testing database
 //            PreparedStatement stms = con.prepareStatement("select * from terminal_log");
 //            ResultSet rs = stms.executeQuery();
 //            FileWriter file = new FileWriter("database-test-result.txt");
@@ -67,7 +67,7 @@ public class DBUtils {
 //            }
 //            file.flush();
 //            file.close();
-//            //
+            //
 
         } catch (Exception ex) {
             log.error(ex.toString(), ex);
