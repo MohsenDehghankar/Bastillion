@@ -50,6 +50,7 @@ public class SessionOutput extends HostSystem {
         this.setAuthorizedKeys(hostSystem.getAuthorizedKeys());
 
     }
+
     public Long getSessionId() {
         return sessionId;
     }
@@ -65,5 +66,6 @@ public class SessionOutput extends HostSystem {
     public void setOutput(StringBuilder output) {
         this.output = output;
     }
+
 
 }
