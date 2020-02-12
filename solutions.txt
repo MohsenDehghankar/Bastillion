@@ -10,3 +10,8 @@
 4. get logs and convert to syslog send to udp
 
 5. test performance on vm with many ssh servers
+
+6. for update:
+        git fetch upstream
+        git rebase upstream/master
+        git push origin master (--force)
