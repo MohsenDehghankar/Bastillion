@@ -147,6 +147,8 @@ public class SessionOutputUtil {
                         outputList.add(sessionOutput);
 
                         //send to audit logger
+                        // todo logging
+                        System.out.println(gson.toJson(new AuditWrapper(user, sessionOutput)));
                         systemAuditLogger.info(gson.toJson(new AuditWrapper(user, sessionOutput)));
 
                         if(enableInternalAudit) {
