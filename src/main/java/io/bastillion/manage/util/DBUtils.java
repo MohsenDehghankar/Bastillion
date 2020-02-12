@@ -57,7 +57,7 @@ public class DBUtils {
 
 
             //testing database
-            PreparedStatement st = con.prepareStatement("select * from session_log");
+            /*PreparedStatement st = con.prepareStatement("select * from session_log");
             ResultSet rs = st.executeQuery();
             FileWriter file = new FileWriter("database-test-result2.txt");
             ResultSetMetaData metaData = rs.getMetaData();
@@ -73,7 +73,7 @@ public class DBUtils {
                 file.write("\n\n");
             }
             file.flush();
-            file.close();
+            file.close();*/
 
 
         } catch (Exception ex) {
