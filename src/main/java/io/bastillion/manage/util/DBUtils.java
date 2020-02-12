@@ -57,9 +57,9 @@ public class DBUtils {
 
 
             //testing database
-            PreparedStatement st = con.prepareStatement("select * from status");
+            PreparedStatement st = con.prepareStatement("select * from session_log");
             ResultSet rs = st.executeQuery();
-            FileWriter file = new FileWriter("database-test-result.txt");
+            FileWriter file = new FileWriter("database-test-result2.txt");
             ResultSetMetaData metaData = rs.getMetaData();
             int col_num = metaData.getColumnCount();
             for (int i = 1; i <= col_num; i++) {

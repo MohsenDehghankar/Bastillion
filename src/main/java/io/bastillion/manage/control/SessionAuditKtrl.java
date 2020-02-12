@@ -99,6 +99,9 @@ public class SessionAuditKtrl extends BaseKontroller {
     public String getJSONTermOutputForSession() {
 
         String json = new Gson().toJson(SessionAuditDB.getTerminalLogsForSession(sessionId, instanceId));
+
+        //System.out.println(json);
+
         try {
             getResponse().getOutputStream().write(json.getBytes());
         } catch (Exception ex) {

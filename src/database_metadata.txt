@@ -66,13 +66,11 @@ for showing tables:
             file.close();
 >
 <============================================================>
-session_log table (shows terminal opening history)
+session_log table (shows terminal opening history) ( maps session ids to users )
 
-terminal_log table (show everything happened in terminal) (output separated)
+terminal_log table (show everything happened in terminal) (output separated) ( is for each session id )
 
-users table (also including last login time)
-
-
+SessionAuditKtrl => getJsonTermOutputForSession() (not separated)
 <=============================================================>
 
 

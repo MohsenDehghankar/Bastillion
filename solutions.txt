@@ -15,3 +15,7 @@
         git fetch upstream
         git rebase upstream/master
         git push origin master (--force)
+
+7. authorized_keys => ( does clean?? )
+
+8. syslog format
