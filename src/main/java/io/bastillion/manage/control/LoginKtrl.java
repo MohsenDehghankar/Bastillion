@@ -52,7 +52,7 @@ public class LoginKtrl extends BaseKontroller {
     @Model(name = "otpEnabled")
     static final Boolean otpEnabled = ("required".equals(AppConfig.getProperty("oneTimePassword")) || "optional".equals(AppConfig.getProperty("oneTimePassword")));
     private static Logger loginAuditLogger = LoggerFactory.getLogger("io.bastillion.manage.control.LoginAudit");
-    private static Logger syslogger = LoggerFactory.getLogger("mysyslogger");
+    private static Logger syslogger = LoggerFactory.getLogger("login-sysLogger");
     private final String AUTH_ERROR = "Authentication Failed : Login credentials are invalid";
     private final String AUTH_ERROR_NO_PROFILE = "Authentication Failed : There are no profiles assigned to this account";
     private final String AUTH_ERROR_EXPIRED_ACCOUNT = "Authentication Failed : Account has expired";
@@ -86,10 +86,8 @@ public class LoginKtrl extends BaseKontroller {
                     sharedSecret = AuthDB.getSharedSecret(user.getId());
                     if (StringUtils.isNotEmpty(sharedSecret) && (auth.getOtpToken() == null || !OTPUtil.verifyToken(sharedSecret, auth.getOtpToken()))) {
                         // logging
-//                        SyslogSender.sendLog(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
                         syslogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
-                        //
-                        loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
+                        //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
                         addError(AUTH_ERROR);
                         return "/login.html";
                     }
@@ -97,10 +95,8 @@ public class LoginKtrl extends BaseKontroller {
                 //check to see if admin has any assigned profiles
                 if (!User.MANAGER.equals(user.getUserType()) && (user.getProfileList() == null || user.getProfileList().size() <= 0)) {
                     // logging
-//                    SyslogSender.sendLog(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_NO_PROFILE);
                     syslogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_NO_PROFILE);
-                    //
-                    loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_NO_PROFILE);
+                    //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_NO_PROFILE);
                     addError(AUTH_ERROR_NO_PROFILE);
                     return "/login.html";
                 }
@@ -108,10 +104,8 @@ public class LoginKtrl extends BaseKontroller {
                 //check to see if account has expired
                 if (user.isExpired()) {
                     // logging
-//                    SyslogSender.sendLog(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_EXPIRED_ACCOUNT);
                     syslogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_EXPIRED_ACCOUNT);
-                    //
-                    loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_EXPIRED_ACCOUNT);
+                    //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_EXPIRED_ACCOUNT);
                     addError(AUTH_ERROR_EXPIRED_ACCOUNT);
                     return "/login.html";
                 }
@@ -131,17 +125,13 @@ public class LoginKtrl extends BaseKontroller {
                     retVal = "redirect:/admin/userSettings.ktrl";
                 }
                 // logging
-//                SyslogSender.sendLog(auth.getUsername() + " (" + clientIP + ") - Authentication Success");
                 syslogger.info(auth.getUsername() + " (" + clientIP + ") - Authentication Success");
-                //
-                loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - Authentication Success");
+                //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - Authentication Success");
             }
 
         } else {
-            // logging
-//            SyslogSender.sendLog(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
-            //
-            loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
+            syslogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
+            //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
             addError(AUTH_ERROR);
             retVal = "/login.html";
         }
