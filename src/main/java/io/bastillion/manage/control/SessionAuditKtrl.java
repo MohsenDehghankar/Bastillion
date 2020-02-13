@@ -100,6 +100,7 @@ public class SessionAuditKtrl extends BaseKontroller {
 
         String json = new Gson().toJson(SessionAuditDB.getTerminalLogsForSession(sessionId, instanceId));
 
+        // complete user input
         //System.out.println(json);
 
         try {

@@ -27,8 +27,7 @@
  */
 package io.bastillion.manage.util;
 
-import java.io.File;
-import java.io.FileWriter;
+
 import java.sql.*;
 
 import org.slf4j.Logger;
@@ -55,11 +54,10 @@ public class DBUtils {
         try {
             con = DSPool.getDataSource().getConnection();
 
-
             //testing database
             /*PreparedStatement st = con.prepareStatement("select * from session_log");
             ResultSet rs = st.executeQuery();
-            FileWriter file = new FileWriter("database-test-result2.txt");
+            FileWriter file = new FileWriter("database-test-result.txt");
             ResultSetMetaData metaData = rs.getMetaData();
             int col_num = metaData.getColumnCount();
             for (int i = 1; i <= col_num; i++) {
@@ -74,7 +72,6 @@ public class DBUtils {
             }
             file.flush();
             file.close();*/
-
 
         } catch (Exception ex) {
             log.error(ex.toString(), ex);
