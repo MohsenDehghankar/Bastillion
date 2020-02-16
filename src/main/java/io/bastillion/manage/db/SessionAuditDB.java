@@ -1,29 +1,29 @@
 /**
- *    Copyright (C) 2013 Loophole, LLC
- *
- *    This program is free software: you can redistribute it and/or  modify
- *    it under the terms of the GNU Affero General Public License, version 3,
- *    as published by the Free Software Foundation.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- *
- *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *    As a special exception, the copyright holders give permission to link the
- *    code of portions of this program with the OpenSSL library under certain
- *    conditions as described in each individual source file and distribute
- *    linked combinations including the program with the OpenSSL library. You
- *    must comply with the GNU Affero General Public License in all respects for
- *    all of the code used other than as permitted herein. If you modify file(s)
- *    with this exception, you may extend this exception to your version of the
- *    file(s), but you are not obligated to do so. If you do not wish to do so,
- *    delete this exception statement from your version. If you delete this
- *    exception statement from all source files in the program, then also delete
- *    it in the license file.
+ * Copyright (C) 2013 Loophole, LLC
+ * <p>
+ * This program is free software: you can redistribute it and/or  modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * As a special exception, the copyright holders give permission to link the
+ * code of portions of this program with the OpenSSL library under certain
+ * conditions as described in each individual source file and distribute
+ * linked combinations including the program with the OpenSSL library. You
+ * must comply with the GNU Affero General Public License in all respects for
+ * all of the code used other than as permitted herein. If you modify file(s)
+ * with this exception, you may extend this exception to your version of the
+ * file(s), but you are not obligated to do so. If you do not wish to do so,
+ * delete this exception statement from your version. If you delete this
+ * exception statement from all source files in the program, then also delete
+ * it in the license file.
  */
 package io.bastillion.manage.db;
 
@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class SessionAuditDB {
     public static final String USER_ID = "user_id";
     public static final String FILTER_BY_USER = "username";
     public static final String FILTER_BY_SYSTEM = "display_nm";
-    
+
     public static final String SORT_BY_FIRST_NM = "first_nm";
     public static final String SORT_BY_LAST_NM = "last_nm";
     public static final String SORT_BY_IP_ADDRESS = "ip_address";
@@ -112,9 +113,9 @@ public class SessionAuditDB {
 
 
         String sql = "select * from session_log where 1=1 ";
-        sql+= StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_USER)) ? " and session_log.username like ? " : "";
-        sql+= StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_SYSTEM)) ? " and session_log.id in ( select session_id from terminal_log where terminal_log.display_nm like ?) " : "";
-        sql+= orderBy;
+        sql += StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_USER)) ? " and session_log.username like ? " : "";
+        sql += StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_SYSTEM)) ? " and session_log.id in ( select session_id from terminal_log where terminal_log.display_nm like ?) " : "";
+        sql += orderBy;
 
         try {
 
@@ -122,12 +123,12 @@ public class SessionAuditDB {
             deleteAuditHistory(con);
 
             PreparedStatement stmt = con.prepareStatement(sql);
-            int i=1;
+            int i = 1;
             //set filters in prepared statement
-            if(StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_USER))){
+            if (StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_USER))) {
                 stmt.setString(i++, sortedSet.getFilterMap().get(FILTER_BY_USER));
             }
-            if(StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_SYSTEM))){
+            if (StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_SYSTEM))) {
                 stmt.setString(i, sortedSet.getFilterMap().get(FILTER_BY_SYSTEM));
             }
 
@@ -148,8 +149,7 @@ public class SessionAuditDB {
 
         } catch (Exception e) {
             log.error(e.toString(), e);
-        }
-        finally {
+        } finally {
             DBUtils.closeConn(con);
         }
 
@@ -177,8 +177,7 @@ public class SessionAuditDB {
 
         } catch (Exception e) {
             log.error(e.toString(), e);
-        }
-        finally {
+        } finally {
             DBUtils.closeConn(con);
         }
         return sessionId;
@@ -187,7 +186,7 @@ public class SessionAuditDB {
     /**
      * insert new session record for user
      *
-     * @param con    DB connection
+     * @param con  DB connection
      * @param user session user
      * @return session id
      */
@@ -232,8 +231,7 @@ public class SessionAuditDB {
 
         } catch (Exception e) {
             log.error(e.toString(), e);
-        }
-        finally {
+        } finally {
             DBUtils.closeConn(con);
         }
     }
@@ -273,8 +271,8 @@ public class SessionAuditDB {
     /**
      * returns terminal logs for user session for host system
      *
-     * @param sessionId     session id
-     * @param instanceId    instance id for terminal session
+     * @param sessionId  session id
+     * @param instanceId instance id for terminal session
      * @return session output for session
      */
     public static List<SessionOutput> getTerminalLogsForSession(Long sessionId, Integer instanceId) {
@@ -287,8 +285,7 @@ public class SessionAuditDB {
 
         } catch (Exception e) {
             log.error(e.toString(), e);
-        }
-        finally {
+        } finally {
             DBUtils.closeConn(con);
         }
 
@@ -299,8 +296,8 @@ public class SessionAuditDB {
     /**
      * returns terminal logs for user session for host system
      *
-     * @param sessionId     session id
-     * @param instanceId    instance id for terminal session
+     * @param sessionId  session id
+     * @param instanceId instance id for terminal session
      * @return session output for session
      */
     public static List<SessionOutput> getTerminalLogsForSession(Connection con, Long sessionId, Integer instanceId) {
@@ -312,12 +309,14 @@ public class SessionAuditDB {
             stmt.setLong(2, sessionId);
             ResultSet rs = stmt.executeQuery();
             StringBuilder outputBuilder = new StringBuilder("");
+
+
             while (rs.next()) {
                 outputBuilder.append(rs.getString("output"));
             }
 
             String output = outputBuilder.toString();
-            output = output.replaceAll("\\u0007|\u001B\\[K|\\]0;|\\[\\d\\d;\\d\\dm|\\[\\dm","");
+            output = output.replaceAll("\\u0007|\u001B\\[K|\\]0;|\\[\\d\\d;\\d\\dm|\\[\\dm", "");
             while (output.contains("\b")) {
                 output = output.replaceFirst(".\b", "");
             }
@@ -326,6 +325,7 @@ public class SessionAuditDB {
             SessionOutput sessionOutput = new SessionOutput();
             sessionOutput.setSessionId(sessionId);
             sessionOutput.setInstanceId(instanceId);
+
             sessionOutput.getOutput().append(output);
 
             outputList.add(sessionOutput);
@@ -411,8 +411,7 @@ public class SessionAuditDB {
 
         } catch (Exception e) {
             log.error(e.toString(), e);
-        }
-        finally {
+        } finally {
             DBUtils.closeConn(con);
         }
 
