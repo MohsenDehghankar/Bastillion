@@ -14,12 +14,12 @@
         </File>-->
         <Syslog name="login-RFC5424" format="RFC5424" host="localhost" port="514"
                 protocol="UDP" appName="bastillion" mdcId="mdc" includeMDC="true"
-                facility="AUTH" enterpriseNumber="18060" newLine="true"
-                messageId="Audit" id="App"/>
+                facility="AUTH" newLine="true"
+                messageId="login" id="bastillion"/>
         <Syslog name="audit-RFC5424" format="RFC5424" host="localhost" port="514"
                 protocol="UDP" appName="bastillion" mdcId="mdc" includeMDC="true"
-                facility="AUTH" enterpriseNumber="18060" newLine="true"
-                messageId="Audit" id="App"/>
+                facility="SYSLOG" newLine="true"
+                messageId="Audit" id="bastillion"/>
        
     </Appenders>
 
@@ -44,7 +44,7 @@
         </Logger>
         -->
         <Root level="info">
-            <AppenderRef ref="login-RFC5424"/>
+<!--            <AppenderRef ref="login-RFC5424"/>-->
             <AppenderRef ref="audit-RFC5424"/>
         </Root>
     </Loggers>

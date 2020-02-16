@@ -391,6 +391,7 @@ public class SSHUtil {
 
 			String newKeys = newKeysBuilder.toString();
 			if (!newKeys.equals(existingKeys)) {
+//				System.out.println("update");
 				log.info("Update Public Keys  ==> " + newKeys);
 				channel = session.openChannel("exec");
 				((ChannelExec) channel).setCommand("echo '" + newKeys + "' > " + authorizedKeys + "; chmod 600 " + authorizedKeys);
