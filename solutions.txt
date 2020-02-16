@@ -6,3 +6,7 @@
 3. Logs : a. from audit sessions in managers profile
           b. in file log4j2.xml, logs are in /var/log/bastillion-* ( uncommenting log4j2.xml => logs in console )
           c. testing database at DBUtils.java ("database testing")
+
+4. get logs and convert to syslog send to udp
+
+5. test performance on vm with many ssh servers

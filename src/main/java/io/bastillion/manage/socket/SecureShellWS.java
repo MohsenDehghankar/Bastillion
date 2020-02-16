@@ -92,6 +92,8 @@ public class SecureShellWS {
                             }
                         }
                     } else {
+                        // input from user
+                        // System.out.println(command);
                         schSession.getCommander().print(command);
                     }
                 }
