@@ -32,3 +32,4 @@
     .sshutils 377
 
 8. how opens ssh session
+9. adding public key
