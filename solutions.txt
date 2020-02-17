@@ -31,3 +31,4 @@
     .also key management interval can be set, i.e. after every 1 minutes updates authorized_keys (deletes what added manually)(the keys added in bastillion will remain)
     .sshutils 377
 
+8. how opens ssh session
