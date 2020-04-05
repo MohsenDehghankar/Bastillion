@@ -59,7 +59,11 @@
             <artifactId>core</artifactId>
             <version>3.3.3</version>
         </dependency>
-
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+        </dependency>
         <!-- provided dependencies-->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
