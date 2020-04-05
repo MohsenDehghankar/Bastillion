@@ -1,0 +1,83 @@
+database tables:
+CATALOGS
+COLLATIONS
+COLUMNS
+COLUMN_PRIVILEGES
+CONSTANTS
+CONSTRAINTS
+CROSS_REFERENCES
+DOMAINS
+FUNCTION_ALIASES
+FUNCTION_COLUMNS
+HELP
+INDEXES
+IN_DOUBT
+KEY_COLUMN_USAGE
+LOCKS
+QUERY_STATISTICS
+REFERENTIAL_CONSTRAINTS
+RIGHTS
+ROLES
+SCHEMATA
+SEQUENCES
+SESSIONS
+SESSION_STATE
+SETTINGS
+SYNONYMS
+TABLES
+TABLE_CONSTRAINTS
+TABLE_PRIVILEGES
+TABLE_TYPES
+TRIGGERS
+TYPE_INFO
+USERS
+VIEWS
+APPLICATION_KEY
+PROFILES
+PUBLIC_KEYS
+SCRIPTS
+SESSION_LOG
+STATUS
+SYSTEM
+SYSTEM_MAP
+TERMINAL_LOG
+USERS
+USER_MAP
+USER_THEME
+<============================================================>
+for showing tables:
+<
+            PreparedStatement st = con.prepareStatement("select * from terminal_log");
+            ResultSet rs = st.executeQuery();
+            FileWriter file = new FileWriter("database-test-result.txt");
+            ResultSetMetaData metaData = rs.getMetaData();
+            int col_num = metaData.getColumnCount();
+            for (int i = 1; i <= col_num; i++) {
+                file.write(metaData.getColumnName(i) + " - ");
+            }
+            file.write("\n");
+            while (rs.next()) {
+                for (int i = 1; i <= col_num; i++) {
+                    file.write(metaData.getColumnName(i) + " : " + rs.getString(metaData.getColumnName(i)) + " ");
+                }
+                file.write("\n\n");
+            }
+            file.flush();
+            file.close();
+>
+<============================================================>
+session_log table (shows terminal opening history) ( maps session ids to users )
+
+terminal_log table (show everything happened in terminal) (output separated) ( is for each session id )
+
+SessionAuditKtrl => getJsonTermOutputForSession() (not separated)
+<=============================================================>
+
+
+
+
+
+
+
+
+

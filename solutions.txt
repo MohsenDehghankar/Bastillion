@@ -1,12 +1,35 @@
 1. SSH key generation only available for Managers. (when having private-key, one can generate his own keys (??) and add to server)
     * creating a predefined script to check /.ssh/authorized_keys
+    . set authorized key refresh interval some minutes
 
 2. Save Terminal Sessions => can use profiles
 
 3. Logs : a. from audit sessions in managers profile
           b. in file log4j2.xml, logs are in /var/log/bastillion-* ( uncommenting log4j2.xml => logs in console )
           c. testing database at DBUtils.java ("database testing")
+          session_log, terminal_log
+
+          logs:
+            auth logs
+            update authorized_keys
+            audit sessions logs
+            (every where there is a logger)
+            https://logging.apache.org/log4j/2.x/manual/appenders.html
+
 
 4. get logs and convert to syslog send to udp
 
 5. test performance on vm with many ssh servers
+
+6. for update:
+        git fetch upstream
+        git rebase upstream/master
+        git push origin master (--force)
+
+7. authorized_keys => ***cleans the authorized_keys file.
+    .overwrites on each ssh connection
+    .also key management interval can be set, i.e. after every 1 minutes updates authorized_keys (deletes what added manually)(the keys added in bastillion will remain)
+    .sshutils 377
+
+8. how opens ssh session
+9. adding public key

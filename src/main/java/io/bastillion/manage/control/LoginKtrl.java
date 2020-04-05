@@ -1,31 +1,32 @@
 /**
- *    Copyright (C) 2013 Loophole, LLC
- *
- *    This program is free software: you can redistribute it and/or  modify
- *    it under the terms of the GNU Affero General Public License, version 3,
- *    as published by the Free Software Foundation.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- *
- *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *    As a special exception, the copyright holders give permission to link the
- *    code of portions of this program with the OpenSSL library under certain
- *    conditions as described in each individual source file and distribute
- *    linked combinations including the program with the OpenSSL library. You
- *    must comply with the GNU Affero General Public License in all respects for
- *    all of the code used other than as permitted herein. If you modify file(s)
- *    with this exception, you may extend this exception to your version of the
- *    file(s), but you are not obligated to do so. If you do not wish to do so,
- *    delete this exception statement from your version. If you delete this
- *    exception statement from all source files in the program, then also delete
- *    it in the license file.
+ * Copyright (C) 2013 Loophole, LLC
+ * <p>
+ * This program is free software: you can redistribute it and/or  modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * As a special exception, the copyright holders give permission to link the
+ * code of portions of this program with the OpenSSL library under certain
+ * conditions as described in each individual source file and distribute
+ * linked combinations including the program with the OpenSSL library. You
+ * must comply with the GNU Affero General Public License in all respects for
+ * all of the code used other than as permitted herein. If you modify file(s)
+ * with this exception, you may extend this exception to your version of the
+ * file(s), but you are not obligated to do so. If you do not wish to do so,
+ * delete this exception statement from your version. If you delete this
+ * exception statement from all source files in the program, then also delete
+ * it in the license file.
  */
 package io.bastillion.manage.control;
+
 
 import io.bastillion.common.util.AppConfig;
 import io.bastillion.common.util.AuthUtil;
@@ -50,7 +51,8 @@ public class LoginKtrl extends BaseKontroller {
     //check if otp is enabled
     @Model(name = "otpEnabled")
     static final Boolean otpEnabled = ("required".equals(AppConfig.getProperty("oneTimePassword")) || "optional".equals(AppConfig.getProperty("oneTimePassword")));
-    private static Logger loginAuditLogger = LoggerFactory.getLogger("io.bastillion.manage.control.LoginAudit");
+//    private static Logger loginAuditLogger = LoggerFactory.getLogger("io.bastillion.manage.control.LoginAudit");
+    private static Logger syslogger = LoggerFactory.getLogger("login-sysLogger");
     private final String AUTH_ERROR = "Authentication Failed : Login credentials are invalid";
     private final String AUTH_ERROR_NO_PROFILE = "Authentication Failed : There are no profiles assigned to this account";
     private final String AUTH_ERROR_EXPIRED_ACCOUNT = "Authentication Failed : Account has expired";
@@ -83,21 +85,27 @@ public class LoginKtrl extends BaseKontroller {
                 if (otpEnabled) {
                     sharedSecret = AuthDB.getSharedSecret(user.getId());
                     if (StringUtils.isNotEmpty(sharedSecret) && (auth.getOtpToken() == null || !OTPUtil.verifyToken(sharedSecret, auth.getOtpToken()))) {
-                        loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
+                        // logging
+                        syslogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
+                        //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
                         addError(AUTH_ERROR);
                         return "/login.html";
                     }
                 }
                 //check to see if admin has any assigned profiles
                 if (!User.MANAGER.equals(user.getUserType()) && (user.getProfileList() == null || user.getProfileList().size() <= 0)) {
-                    loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_NO_PROFILE);
+                    // logging
+                    syslogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_NO_PROFILE);
+                    //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_NO_PROFILE);
                     addError(AUTH_ERROR_NO_PROFILE);
                     return "/login.html";
                 }
 
                 //check to see if account has expired
                 if (user.isExpired()) {
-                    loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_EXPIRED_ACCOUNT);
+                    // logging
+                    syslogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_EXPIRED_ACCOUNT);
+                    //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_EXPIRED_ACCOUNT);
                     addError(AUTH_ERROR_EXPIRED_ACCOUNT);
                     return "/login.html";
                 }
@@ -116,11 +124,14 @@ public class LoginKtrl extends BaseKontroller {
                 } else if ("changeme".equals(auth.getPassword()) && Auth.AUTH_BASIC.equals(user.getAuthType())) {
                     retVal = "redirect:/admin/userSettings.ktrl";
                 }
-                loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - Authentication Success");
+                // logging
+                syslogger.info(auth.getUsername() + " (" + clientIP + ") - Authentication Success");
+                //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - Authentication Success");
             }
 
         } else {
-            loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
+            syslogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
+            //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR);
             addError(AUTH_ERROR);
             retVal = "/login.html";
         }
