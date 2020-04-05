@@ -1,0 +1,42 @@
+Bugs Fixed =>
+1. just managers can create ssh keys ( 3 hours )
+2. make logs readable ( 3 hours )
+3. adding predefined keys to database ( 4 hours )
+4. create log of uploading files ( 1 hour )
+5. download from server ( 5 hours )
+6. when removing a manager's account, all ssh keys would remove. ( 1 hour )  
+7. opening more than 8 terminals has problems ( 5 hours )
+8. overwrite current line (not going to nextline) ( 4 hours )
+9. when pressing 'ctrl + l' to clean terminal, cursur goes to url bar. ( 2 hours )
+10. some shortcuts like 'alt + backspace' not works normally. ( 1 hour )
+11. when scrolling in VIM , marginal texts (percentages) come up with screen. ( 4 hours )
+
+
+
+Primary Bugs => 
+	Mr.Jalali:
+		1. in some special cases, connects to wrong server. (when using connect to host.)
+		2. buffer of scroll in terminals is not enough.
+		3. paste text using mouse middle btn.
+
+	others:
+		4. when pasting in Nano, goes to next lines. 
+		5. can't open more than one tab of bastillion. 
+		6. account login problem ( can't login to account after sometime )
+
+
+
+Security Bugs =>
+1. log of VIM and Nano is unreadable.  (solution  ==>  
+						saving file before and after change
+						not save all content of large files )
+
+2. one may change authorized_keys and disconnect the server  ( solution ==> 
+						when entering "authorizd_key", "ssh config file" in commands logout the admin (not manager)
+						while uploading check "authorized_key", "ssh config file" in file content )
+						
+3. log from pushed files => save file and rename it and print name and destination path in log 
+4. log from downloaded files
+
+
+Ignored Bugs =>

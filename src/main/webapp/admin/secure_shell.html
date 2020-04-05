@@ -32,10 +32,21 @@
     <script th:src="@{/_res/js/jquery-ui.js}"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/_res/css/jquery-ui/jquery-ui.css}"/>
 
-    <script th:inline="javascript">
-        /*<![CDATA[*/
+   <!-- <script type="module" src="/_res/js/tty/addons/FitAddon.js">
+        import {FitAddon} from "../_res/js/tty/addons/xterm-addon-fit/src/FitAddon";
+        const fitAddon = new FitAddon();
+    </script>-->
+<!--    <script type="module" src="../_res/js/tty/addons/xterm-addon-fit/src/FitAddon"></script>-->
+    <!--<script type="module">
+        const fitAddon = new FitAddon();
+        const term = new Terminal();
 
+    </script>-->
+    <script th:inline="javascript">
+
+        /*<![CDATA[*/
         $(document).ready(function () {
+            // const fitAddon = new FitAddon();
 
             $.ajaxSetup({cache: false, async:false});
 
@@ -49,6 +60,31 @@
                 return ids;
             }
 
+            // mohsen function
+            function proposeGeometry(term) {
+                if (!term.element.parentElement) {
+                    return null;
+                }
+                var parentElementStyle = window.getComputedStyle(term.element.parentElement);
+                var parentElementHeight = parseInt(parentElementStyle.getPropertyValue('height'));
+                var parentElementWidth = Math.max(0, parseInt(parentElementStyle.getPropertyValue('width')));
+                var elementStyle = window.getComputedStyle(term.element);
+                var elementPadding = {
+                    top: parseInt(elementStyle.getPropertyValue('padding-top')),
+                    bottom: parseInt(elementStyle.getPropertyValue('padding-bottom')),
+                    right: parseInt(elementStyle.getPropertyValue('padding-right')),
+                    left: parseInt(elementStyle.getPropertyValue('padding-left'))
+                };
+                var elementPaddingVer = elementPadding.top + elementPadding.bottom;
+                var elementPaddingHor = elementPadding.right + elementPadding.left;
+                var availableHeight = parentElementHeight - elementPaddingVer;
+                var availableWidth = parentElementWidth - elementPaddingHor - term._core.viewport.scrollBarWidth;
+                var geometry = {
+                    cols: Math.floor(availableWidth / term._core._renderCoordinator.dimensions.actualCellWidth),
+                    rows: Math.floor(availableHeight / term._core._renderCoordinator.dimensions.actualCellHeight)
+                };
+                return geometry;
+            }
 
             $('#upload_push_dialog').on('hidden.bs.modal', function () {
                 $("#upload_push_frame").attr("src", "");
@@ -164,6 +200,12 @@
                     var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
                     keys[keyCode] = true;
 
+                    if (keys[8] && e.altKey){
+                        connection.send(JSON.stringify({id: getActiveTermsInstanceIds(), keyCode: 27}));
+                        connection.send(JSON.stringify({id: getActiveTermsInstanceIds(), keyCode: keyCode}));
+                        return;
+                    }
+
                     //27 - ESC
                     //37 - LEFT
                     //38 - UP
@@ -183,8 +225,9 @@
                         connection.send(JSON.stringify({id: getActiveTermsInstanceIds(), keyCode: keyCode}));
                     }
 
+
                     //prevent default for unix ctrl commands
-                    if (e.ctrlKey && (keyCode === 83 || keyCode === 81 || keyCode === 84 || keyCode === 220 || keyCode === 90 || keyCode === 72 || keyCode === 87 || keyCode === 85 || keyCode === 82 || keyCode === 68)) {
+                    if (e.ctrlKey && (keyCode===108 || keyCode===76 || keyCode === 83 || keyCode === 81 || keyCode === 84 || keyCode === 220 || keyCode === 90 || keyCode === 72 || keyCode === 87 || keyCode === 85 || keyCode === 82 || keyCode === 68)) {
                         e.preventDefault();
                         e.stopImmediatePropagation();
                     }
@@ -244,8 +287,12 @@
                     var width = Math.floor($('#output_' + id).innerWidth() - 20);
                     var height = Math.floor($('#output_' + id).innerHeight() - y_offset);
 
+                    // console.warn("salam: " + width + " " + height);
+                    var geom = proposeGeometry(termMap[id]);
+
+
                     $.ajax({
-                        url: '../admin/setPtyType.ktrl?id=' + id + '&userSettings.ptyWidth=' + width + '&userSettings.ptyHeight=' + height + '&_csrf=' + [[${session._csrf}]],
+                        url: '../admin/setPtyType.ktrl?id=' + id + '&userSettings.ptyWidth=' + width + '&userSettings.ptyHeight=' + height + '&userSettings.cols=' + geom.cols + '&userSettings.rows=' + geom.rows + '&_csrf=' + [[${session._csrf}]],
                         cache: false
                     });
                     termMap[id].fit();
@@ -288,10 +335,12 @@
             function createTermMap(id, output) {
 
                 Terminal.applyAddon(fit);
+                // const fitAddon = new FitAddon();
                 termMap[id] = new Terminal({
                     fontSize: 14,
                     fontFamily: 'DejaVu Sans Mono, Liberation Mono, monospace'
                 });
+                // termMap[id].loadAddon(fitAddon);
 
                 var  CUSTOM_THEME =
                     {
@@ -326,6 +375,7 @@
                 termMap[id].setOption('theme', CUSTOM_THEME);
                 termMap[id].open($("#run_cmd_" + id).find('.output').get(0));
 
+                // fitAddon.fit();
 
                 termMap[id].write(output);
 
@@ -508,12 +558,13 @@
                                 <li><a id="connect_to_host" data-toggle="modal" data-target="#connect_to_host_dialog"
 
 
-                                       href="#">Connect to Host</a></li>
-                                <li><a id="dup_session" href="#">Duplicate Session</a></li>
+                                       href="#" onclick="document.getElementById('go_top_link').click()">Connect to Host</a></li>
+<!--                                <li><a id="dup_session" href="#">Duplicate Session</a></li>-->
                                 <li><a id="reset_size" href="#">Reset Size</a></li>
                                 <li><a id="disconnect" href="#">Disconnect</a></li>
                             </ul>
                         </li>
+                        <li><a type="hidden" id="go_top_link" href="#" onclick="scrollTo(0,0)">Go To Top</a> </li>
                         <li><a th:href="'exitTerms.ktrl?_csrf=' + ${session._csrf}">Exit Terminals</a></li>
                     </ul>
 

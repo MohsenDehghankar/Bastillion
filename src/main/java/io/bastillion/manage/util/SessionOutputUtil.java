@@ -77,7 +77,7 @@ public class SessionOutputUtil {
     /**
      * removes session output for host system
      *
-     * @param sessionId  session id
+     * @param sessionId    session id
      * @param instanceId id of host system instance
      */
     public static void removeOutput(Long sessionId, Integer instanceId) {
@@ -109,11 +109,11 @@ public class SessionOutputUtil {
     /**
      * adds a new output
      *
-     * @param sessionId  session id
+     * @param sessionId    session id
      * @param instanceId id of host system instance
-     * @param value      Array that is the source of characters
-     * @param offset     The initial offset
-     * @param count      The length
+     * @param value        Array that is the source of characters
+     * @param offset       The initial offset
+     * @param count        The length
      */
     public static void addToOutput(Long sessionId, Integer instanceId, char value[], int offset, int count) {
 
@@ -129,7 +129,7 @@ public class SessionOutputUtil {
      * returns list of output lines
      *
      * @param sessionId session id object
-     * @param user      user auth object
+     * @param user user auth object
      * @return session output list
      */
     public static List<SessionOutput> getOutput(Connection con, Long sessionId, User user) {

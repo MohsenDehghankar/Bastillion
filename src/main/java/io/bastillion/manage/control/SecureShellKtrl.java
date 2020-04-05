@@ -266,7 +266,9 @@ public class SecureShellKtrl extends BaseKontroller {
                 SchSession schSession = userSchSessions.getSchSessionMap().get(id);
 
                 ChannelShell channel = (ChannelShell) schSession.getChannel();
-                channel.setPtySize((int) Math.floor(userSettings.getPtyWidth() / 8.0000), (int) Math.floor(userSettings.getPtyHeight() / 14.4166), userSettings.getPtyWidth(), userSettings.getPtyHeight());
+//                System.out.println(((int) Math.floor(userSettings.getPtyWidth() / 8.000)));
+//                System.out.println((int) Math.floor(userSettings.getPtyHeight() / 14.4166));
+                channel.setPtySize(userSettings.getCols(), userSettings.getRows(), userSettings.getPtyWidth(), userSettings.getPtyHeight());
                 schSession.setChannel(channel);
 
             }
