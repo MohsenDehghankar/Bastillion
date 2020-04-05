@@ -77,7 +77,7 @@ public class SessionOutputUtil {
     /**
      * removes session output for host system
      *
-     * @param sessionId    session id
+     * @param sessionId  session id
      * @param instanceId id of host system instance
      */
     public static void removeOutput(Long sessionId, Integer instanceId) {

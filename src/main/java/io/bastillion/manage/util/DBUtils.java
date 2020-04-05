@@ -27,13 +27,9 @@
  */
 package io.bastillion.manage.util;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
