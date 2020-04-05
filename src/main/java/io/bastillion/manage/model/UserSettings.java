@@ -42,6 +42,16 @@ public class UserSettings {
     String theme;
     Integer ptyWidth;
     Integer ptyHeight;
+    Integer cols;
+    Integer rows;
+
+    public Integer getCols() {
+        return cols;
+    }
+
+    public Integer getRows() {
+        return rows;
+    }
 
     public String[] getColors() {
         return colors;

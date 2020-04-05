@@ -149,6 +149,8 @@ public class SessionOutputUtil {
                         //send to audit logger
                         systemAuditLogger.info(gson.toJson(new AuditWrapper(user, sessionOutput)));
 
+                        System.out.println(gson.toJson(new AuditWrapper(user, sessionOutput)));
+
                         if(enableInternalAudit) {
                             SessionAuditDB.insertTerminalLog(con, sessionOutput);
                         }
