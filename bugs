@@ -10,20 +10,23 @@ Bugs Fixed =>
 9. when pressing 'ctrl + l' to clean terminal, cursur goes to url bar. ( 2 hours )
 10. some shortcuts like 'alt + backspace' not works normally. ( 1 hour )
 11. when scrolling in VIM , marginal texts (percentages) come up with screen. ( 4 hours )
+12. buffer of scroll in terminals is not enough ( 1 hour )
 
 
 
 Primary Bugs => 
 	Mr.Jalali:
 		1. in some special cases, connects to wrong server. (when using connect to host.)
-		2. buffer of scroll in terminals is not enough.
-		3. paste text using mouse middle btn.
+		2. paste text using mouse middle btn.
 
 	others:
-		4. when pasting in Nano, goes to next lines. 
-		5. can't open more than one tab of bastillion. 
-		6. account login problem ( can't login to account after sometime )
+		3. when pasting in Nano, goes to next lines. 
+		4. can't open more than one tab of bastillion. 
+		5. account login problem ( can't login to account after sometime )
 
+
+( RADIUS )
+( database )
 
 
 Security Bugs =>
