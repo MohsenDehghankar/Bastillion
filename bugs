@@ -16,11 +16,11 @@ Bugs Fixed =>
 
 
 Primary Bugs => 
-	Mr.Jalali:
+	a:
 		1. in some special cases, connects to wrong server. (when using connect to host.)
 		2. paste text using mouse middle btn.
 
-	others:
+	b:
 		3. when pasting in Nano, goes to next lines. 
 		4. can't open more than one tab of bastillion. 
 		5. account login problem ( can't login to account after sometime )
