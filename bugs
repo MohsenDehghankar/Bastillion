@@ -11,6 +11,7 @@ Bugs Fixed =>
 10. some shortcuts like 'alt + backspace' not works normally. ( 1 hour )
 11. when scrolling in VIM , marginal texts (percentages) come up with screen. ( 4 hours )
 12. buffer of scroll in terminals is not enough ( 1 hour )
+13. log of uploaded file ( renaming the file, saving the file in "target/upload" , printing source and destination in log ) ( 2 hours )
 
 
 
@@ -37,9 +38,8 @@ Security Bugs =>
 2. one may change authorized_keys and disconnect the server  ( solution ==> 
 						when entering "authorizd_key", "ssh config file" in commands logout the admin (not manager)
 						while uploading check "authorized_key", "ssh config file" in file content )
-						
-3. log from pushed files => save file and rename it and print name and destination path in log 
-4. log from downloaded files
+
+3. log from downloaded files ( delete upload & download stored files after a time (like download) )
 
 
 Ignored Bugs =>

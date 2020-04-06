@@ -1,38 +1,45 @@
 /**
- *    Copyright (C) 2013 Loophole, LLC
- *
- *    This program is free software: you can redistribute it and/or  modify
- *    it under the terms of the GNU Affero General Public License, version 3,
- *    as published by the Free Software Foundation.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- *
- *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *    As a special exception, the copyright holders give permission to link the
- *    code of portions of this program with the OpenSSL library under certain
- *    conditions as described in each individual source file and distribute
- *    linked combinations including the program with the OpenSSL library. You
- *    must comply with the GNU Affero General Public License in all respects for
- *    all of the code used other than as permitted herein. If you modify file(s)
- *    with this exception, you may extend this exception to your version of the
- *    file(s), but you are not obligated to do so. If you do not wish to do so,
- *    delete this exception statement from your version. If you delete this
- *    exception statement from all source files in the program, then also delete
- *    it in the license file.
+ * Copyright (C) 2013 Loophole, LLC
+ * <p>
+ * This program is free software: you can redistribute it and/or  modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * As a special exception, the copyright holders give permission to link the
+ * code of portions of this program with the OpenSSL library under certain
+ * conditions as described in each individual source file and distribute
+ * linked combinations including the program with the OpenSSL library. You
+ * must comply with the GNU Affero General Public License in all respects for
+ * all of the code used other than as permitted herein. If you modify file(s)
+ * with this exception, you may extend this exception to your version of the
+ * file(s), but you are not obligated to do so. If you do not wish to do so,
+ * delete this exception statement from your version. If you delete this
+ * exception statement from all source files in the program, then also delete
+ * it in the license file.
  */
 package io.bastillion.manage.control;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.bastillion.common.util.AuthUtil;
 import io.bastillion.manage.db.SystemStatusDB;
+import io.bastillion.manage.db.UserDB;
+import io.bastillion.manage.model.AuditWrapper;
+import io.bastillion.manage.model.FileTransferAuditWrapper;
 import io.bastillion.manage.model.HostSystem;
 import io.bastillion.manage.model.SchSession;
 import io.bastillion.manage.util.DBUtils;
+import io.bastillion.manage.util.FileTransferAuditSerializer;
 import io.bastillion.manage.util.SSHUtil;
+import io.bastillion.manage.util.SessionOutputSerializer;
 import loophole.mvc.annotation.Kontrol;
 import loophole.mvc.annotation.MethodType;
 import loophole.mvc.annotation.Model;
@@ -50,15 +57,15 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class UploadAndPushKtrl extends BaseKontroller {
 
     public static final String UPLOAD_PATH = DBUtils.class.getClassLoader().getResource(".").getPath() + "../upload";
     private static Logger log = LoggerFactory.getLogger(UploadAndPushKtrl.class);
+    // json for logging
+    private static Gson gson = new GsonBuilder().registerTypeAdapter(FileTransferAuditWrapper.class,
+            new FileTransferAuditSerializer()).create();
 
     @Model(name = "upload")
     File upload;
@@ -103,13 +110,13 @@ public class UploadAndPushKtrl extends BaseKontroller {
                 if (!item.isFormField()) {
                     uploadFileName = new File(item.getName()).getName();
                     File path = new File(UPLOAD_PATH);
-                    if(!path.exists()) {
+                    if (!path.exists()) {
                         path.mkdirs();
                     }
                     upload = new File(UPLOAD_PATH + File.separator + uploadFileName);
                     item.write(upload);
                 } else {
-                    pushDir =  item.getString();
+                    pushDir = item.getString();
                 }
             }
 
@@ -152,7 +159,23 @@ public class UploadAndPushKtrl extends BaseKontroller {
                 if (session != null) {
 
                     //push upload to system
-                    currentSystemStatus = SSHUtil.pushUpload(pendingSystemStatus, session.getSession(), UPLOAD_PATH + "/" + uploadFileName, pushDir + "/" + uploadFileName);
+                    currentSystemStatus = SSHUtil.pushUpload(pendingSystemStatus, session.getSession(),
+                            UPLOAD_PATH + "/" + uploadFileName, pushDir + "/" + uploadFileName);
+
+                    try {
+                        // rename the file
+                        String name = UUID.randomUUID().toString();
+                        File f = new File(UPLOAD_PATH + "/" + name);
+                        FileUtils.moveFile(new File(UPLOAD_PATH + "/" + uploadFileName), f);
+
+                        // create log of uploaded file
+                        FileTransferAuditWrapper wrapper = new FileTransferAuditWrapper(UserDB.getUser(userId),
+                                pendingSystemStatus, UPLOAD_PATH + "/" + name,
+                                pushDir + "/" + uploadFileName, sessionId, "upload");
+                        log.info(gson.toJson(wrapper, FileTransferAuditWrapper.class));
+                    } catch (Exception e) {
+                        log.error(e.toString(), e);
+                    }
 
                     //update system status
                     SystemStatusDB.updateSystemStatus(currentSystemStatus, userId);
@@ -162,8 +185,11 @@ public class UploadAndPushKtrl extends BaseKontroller {
 
             }
 
+
+            // remove uploaded file
+
             //if push has finished to all servers then delete uploaded file
-            if (pendingSystemStatus == null) {
+            /*if (pendingSystemStatus == null) {
                 File delFile = new File(UPLOAD_PATH, uploadFileName);
                 FileUtils.deleteQuietly(delFile);
 
@@ -184,7 +210,8 @@ public class UploadAndPushKtrl extends BaseKontroller {
 
                 }
 
-            }
+            }*/
+
             hostSystemList = SystemStatusDB.getAllSystemStatus(userId);
 
 
