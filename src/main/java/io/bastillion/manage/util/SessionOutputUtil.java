@@ -124,9 +124,6 @@ public class SessionOutputUtil {
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
         if (userSessionsOutput != null) {
             userSessionsOutput.getSessionOutputMap().get(instanceId).getOutput().append(value, offset, count);
-
-            // todo
-
         }
 
     }
@@ -156,15 +153,19 @@ public class SessionOutputUtil {
 
                         outputList.add(sessionOutput);
 
+                        /*
                         // send to audit logger
                         String out = sessionOutput.getOutput().toString();
                         if ((out.charAt(0) == 13 || out.charAt(0) == 27)) {
                             accumulator.add(sessionOutput);
                             // accumulative log
-                            sendLogOfAccumulator(user, sessionId);
+                            sendLogOfAccumulator(user);
                         } else {
                             accumulator.add(sessionOutput);
-                        }
+                        }*/
+
+                        // normal logging
+                        //syslogger.info(gson.toJson(new AuditWrapper(user, sessionOutput)));
 
                         if (enableInternalAudit) {
                             SessionAuditDB.insertTerminalLog(con, sessionOutput);
@@ -184,25 +185,8 @@ public class SessionOutputUtil {
         return outputList;
     }
 
-    private static void sendLogOfAccumulator(User user, Long sessionId) {
-        HashMap<Integer, StringBuilder> instanceToCMD = new HashMap<>();
-        HashMap<Integer, SessionOutput> instanceToOneOutput = new HashMap<>();
-        for (SessionOutput sessionOutput : accumulator) {
-            int instanceId = sessionOutput.getInstanceId();
-            if (instanceToCMD.containsKey(instanceId)) {
-                instanceToCMD.get(instanceId).append(sessionOutput.getOutput().toString());
-            } else {
-                instanceToCMD.put(instanceId, new StringBuilder(sessionOutput.getOutput()));
-                instanceToOneOutput.put(instanceId, sessionOutput);
-            }
-        }
-        SessionOutput tmp = null;
-        for (Integer instanceId : instanceToCMD.keySet()) {
-            tmp = gson.fromJson(gson.toJson(instanceToOneOutput.get(instanceId)), SessionOutput.class);
-            tmp.setOutput(instanceToCMD.get(instanceId));
-            syslogger.info(gson.toJson(new AuditWrapper(user, tmp)));
-        }
-        accumulator = new ArrayList<>();
+    public static void sendLog(User user, SessionOutput sessionOutput) {
+        syslogger.info(gson.toJson(new AuditWrapper(user, sessionOutput)));
     }
 
 

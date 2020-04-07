@@ -497,7 +497,7 @@ public class SSHUtil {
             //new session output
             SessionOutput sessionOutput = new SessionOutput(sessionId, hostSystem);
 
-            Runnable run = new SecureShellTask(sessionOutput, outFromChannel);
+            Runnable run = new SecureShellTask(sessionOutput, outFromChannel, userId, hostSystem);
             Thread thread = new Thread(run);
             thread.start();
 
