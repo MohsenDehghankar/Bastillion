@@ -57,6 +57,7 @@ public class SessionOutputUtil {
     private static Logger syslogger = LoggerFactory.getLogger("audit-sysLogger");
     private static ArrayList<SessionOutput> accumulator = new ArrayList<>();
 
+
     private SessionOutputUtil() {
     }
 
@@ -95,6 +96,7 @@ public class SessionOutputUtil {
      */
     public static void addOutput(SessionOutput sessionOutput) {
 
+
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionOutput.getSessionId());
         if (userSessionsOutput == null) {
             userSessionsOutputMap.put(sessionOutput.getSessionId(), new UserSessionsOutput());
@@ -109,17 +111,22 @@ public class SessionOutputUtil {
     /**
      * adds a new output
      *
-     * @param sessionId    session id
+     * @param sessionId  session id
      * @param instanceId id of host system instance
-     * @param value        Array that is the source of characters
-     * @param offset       The initial offset
-     * @param count        The length
+     * @param value      Array that is the source of characters
+     * @param offset     The initial offset
+     * @param count      The length
      */
     public static void addToOutput(Long sessionId, Integer instanceId, char value[], int offset, int count) {
+
+//        System.out.println("cd:" + new StringBuilder("").append(value, offset, count));
 
         UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
         if (userSessionsOutput != null) {
             userSessionsOutput.getSessionOutputMap().get(instanceId).getOutput().append(value, offset, count);
+
+            // todo
+
         }
 
     }
@@ -129,7 +136,7 @@ public class SessionOutputUtil {
      * returns list of output lines
      *
      * @param sessionId session id object
-     * @param user user auth object
+     * @param user      user auth object
      * @return session output list
      */
     public static List<SessionOutput> getOutput(Connection con, Long sessionId, User user) {
@@ -148,17 +155,16 @@ public class SessionOutputUtil {
 
 
                         outputList.add(sessionOutput);
+
                         // send to audit logger
                         String out = sessionOutput.getOutput().toString();
                         if ((out.charAt(0) == 13 || out.charAt(0) == 27)) {
                             accumulator.add(sessionOutput);
                             // accumulative log
-                            sendLogOfAccumulator(user);
+                            sendLogOfAccumulator(user, sessionId);
                         } else {
                             accumulator.add(sessionOutput);
                         }
-
-//                        System.out.println(gson.toJson(new AuditWrapper(user, sessionOutput)));
 
                         if (enableInternalAudit) {
                             SessionAuditDB.insertTerminalLog(con, sessionOutput);
@@ -178,14 +184,14 @@ public class SessionOutputUtil {
         return outputList;
     }
 
-    private static void sendLogOfAccumulator(User user){
+    private static void sendLogOfAccumulator(User user, Long sessionId) {
         HashMap<Integer, StringBuilder> instanceToCMD = new HashMap<>();
         HashMap<Integer, SessionOutput> instanceToOneOutput = new HashMap<>();
         for (SessionOutput sessionOutput : accumulator) {
             int instanceId = sessionOutput.getInstanceId();
-            if (instanceToCMD.containsKey(instanceId)){
+            if (instanceToCMD.containsKey(instanceId)) {
                 instanceToCMD.get(instanceId).append(sessionOutput.getOutput().toString());
-            }else{
+            } else {
                 instanceToCMD.put(instanceId, new StringBuilder(sessionOutput.getOutput()));
                 instanceToOneOutput.put(instanceId, sessionOutput);
             }

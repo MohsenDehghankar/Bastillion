@@ -314,6 +314,15 @@ public class SessionAuditDB {
 
             String output = outputBuilder.toString();
             output = output.replaceAll("\\u0007|\u001B\\[K|\\]0;|\\[\\d\\d;\\d\\dm|\\[\\dm", "");
+
+            // more regex
+            output = output.replaceAll("\\[\\??\\d+;?\\d+(H|r|h|l)(\\d+)?","");
+            output = output.replaceAll("(\\[\\d+\\S\\d+%|~@\\S)","");
+            output = output.replaceAll("\\[\\d+C\\S+","");
+            output = output.replaceAll("\\[(\\d+)?m","");
+
+
+
             while (output.contains("\b")) {
                 output = output.replaceFirst(".\b", "");
             }
