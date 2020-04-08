@@ -2,12 +2,12 @@ package io.bastillion.manage.model;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jcraft.jsch.Channel;
 import io.bastillion.manage.db.UserDB;
 import io.bastillion.manage.util.DBUtils;
 import io.bastillion.manage.util.SessionOutputSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,9 +18,13 @@ import java.util.UUID;
 public class KeyBoardCapture {
 
     public static final String DIR = DBUtils.class.getClassLoader().getResource(".").getPath() + "../capture";
-    private static Logger syslogger = LoggerFactory.getLogger("audit-sysLogger");
+    public static Logger syslogger = LoggerFactory.getLogger("audit-sysLogger");
     private static Gson gson = new GsonBuilder().registerTypeAdapter(AuditWrapper.class, new SessionOutputSerializer()).create();
     private static Logger log = LoggerFactory.getLogger(KeyBoardCapture.class);
+
+    // prohibited strings
+    private static final String[] PROHIBITS = new String[]{"authorized_ke", "ssh_con", "sshd_con"};
+
     String filePath;
     StringBuilder keyBoardInput;
     StringBuilder lastInput;
@@ -30,6 +34,8 @@ public class KeyBoardCapture {
     FileWriter fileWriter;
     Long userId;
     HostSystem hostSystem;
+    Channel channel;
+    String userType;
 
     static {
         try {
@@ -39,10 +45,12 @@ public class KeyBoardCapture {
         }
     }
 
-    public KeyBoardCapture(Long sessionId, Integer instanceId, Long userId, HostSystem hostSystem) {
+    public KeyBoardCapture(Long sessionId, Integer instanceId, Long userId, HostSystem hostSystem, Channel channel) {
         createRandomName();
         this.keyBoardInput = new StringBuilder("");
+        this.channel = channel;
         this.userId = userId;
+        this.userType = UserDB.getUser(userId).getUserType();
         this.hostSystem = hostSystem;
         this.instanceId = instanceId;
         this.sessionId = sessionId;
@@ -286,8 +294,28 @@ public class KeyBoardCapture {
     }
 
     private void reset() {
+        // check for prohibited regex
+        if (userType.equals("A")) {
+            if (!isCommandLegal(keyBoardInput.toString())) {
+                channel.disconnect();
+                saveCapture();
+//            System.out.println("disconnected1");
+                syslogger.error("invalid access to prohibited places" + " sessionId = " + sessionId +
+                        " instanceId = " + instanceId);
+            }
+        }
+
         keyBoardInput = new StringBuilder("");
         pointer = 0;
+    }
+
+    public static boolean isCommandLegal(String cmd) {
+
+        for (String prohibit : PROHIBITS) {
+            if (cmd.contains(prohibit))
+                return false;
+        }
+        return true;
     }
 
     public void saveCapture() {

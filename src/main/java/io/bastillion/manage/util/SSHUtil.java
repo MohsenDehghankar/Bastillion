@@ -516,7 +516,7 @@ public class SSHUtil {
             schSession.setHostSystem(hostSystem);
 
 
-            schSession.setKeyBoardCapture(new KeyBoardCapture(sessionId, instanceId, userId, hostSystem));
+            schSession.setKeyBoardCapture(new KeyBoardCapture(sessionId, instanceId, userId, hostSystem, channel));
 
             //refresh keys for session
             addPubKey(hostSystem, session, appKey.getPublicKey());

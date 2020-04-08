@@ -1,8 +1,11 @@
 package io.bastillion.manage.util;
 
 
-
+import io.bastillion.manage.control.SecureShellKtrl;
+import io.bastillion.manage.db.UserDB;
 import io.bastillion.manage.model.*;
+
+import java.util.Map;
 
 
 /**
@@ -40,5 +43,18 @@ public class CommandLine {
         SessionOutput output = new SessionOutput(sessionId, hostSystem);
         output.setOutput(log);
         SessionOutputUtil.sendLog(user, output);
+
+        if (user.getUserType().equals("M"))
+            return;
+        // check prohibited strings
+        if (!KeyBoardCapture.isCommandLegal(log.toString())) {
+            Map<Long, UserSchSessions> userSchSessionMap = SecureShellKtrl.getUserSchSessionMap();
+            UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
+            SchSession schSession = userSchSessions.getSchSessionMap().get(instanceId);
+            schSession.getChannel().disconnect();
+//            System.out.println("disconnected2");
+            KeyBoardCapture.syslogger.error("invalid access to prohibited places" + " sessionId = " + sessionId +
+                    " instanceId = " + instanceId);
+        }
     }
 }

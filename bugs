@@ -12,7 +12,8 @@ Bugs Fixed =>
 11. when scrolling in VIM , marginal texts (percentages) come up with screen. ( 4 hours )
 12. buffer of scroll in terminals is not enough ( 1 hour )
 13. log of uploaded file ( renaming the file, saving the file in "target/upload" , printing source and destination in log ) ( 2 hours )
-
+14. capture keyboard of client, so log of vim and nano will be readable. ( 5 hours )
+15. check existance of "authorized_keys" and "ssh_config" and "sshd_config" in commands. ( 1 hour )
 
 
 Primary Bugs => 
@@ -31,15 +32,7 @@ Primary Bugs =>
 
 
 Security Bugs =>
-1. log of VIM and Nano is unreadable.  (solution  ==>  
-						saving file before and after change
-						not save all content of large files )
-
-2. one may change authorized_keys and disconnect the server  ( solution ==> 
-						when entering "authorizd_key", "ssh config file" in commands logout the admin (not manager)
-						while uploading check "authorized_key", "ssh config file" in file content )
-
-3. log from downloaded files ( delete upload & download stored files after a time (like download) )
+1. log from downloaded files ( delete upload & download stored files after a time (like download) )
 
 
 Ignored Bugs =>
