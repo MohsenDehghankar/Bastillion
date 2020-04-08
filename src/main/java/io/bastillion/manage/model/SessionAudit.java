@@ -63,7 +63,4 @@ public class SessionAudit extends User {
         this.hostSystemList = hostSystemList;
     }
 
-    public static void sendLogOfCommand(String command){
-        // todo
-    }
 }

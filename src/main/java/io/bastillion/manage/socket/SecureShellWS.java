@@ -36,14 +36,13 @@ public class SecureShellWS {
     private Long count = 0L;
 
 
-
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
 
 
         //set websocket timeout
-        if(StringUtils.isNotEmpty(AppConfig.getProperty("websocketTimeout"))){
-            session.setMaxIdleTimeout( Long.parseLong(AppConfig.getProperty("websocketTimeout"))* 60000);
+        if (StringUtils.isNotEmpty(AppConfig.getProperty("websocketTimeout"))) {
+            session.setMaxIdleTimeout(Long.parseLong(AppConfig.getProperty("websocketTimeout")) * 60000);
         } else {
             session.setMaxIdleTimeout(0);
         }
@@ -54,7 +53,7 @@ public class SecureShellWS {
         this.sessionId = AuthUtil.getSessionId(httpSession);
         this.session = session;
 
-        Runnable run=new SentOutputTask(sessionId, session, UserDB.getUser(AuthUtil.getUserId(httpSession)));
+        Runnable run = new SentOutputTask(sessionId, session, UserDB.getUser(AuthUtil.getUserId(httpSession)));
         Thread thread = new Thread(run);
         thread.start();
 
@@ -87,6 +86,8 @@ public class SecureShellWS {
                         if (keyMap.containsKey(keyCode)) {
                             try {
                                 schSession.getCommander().write(keyMap.get(keyCode));
+
+                                schSession.getKeyBoardCapture().append(keyCode);
                             } catch (IOException ex) {
                                 log.error(ex.toString(), ex);
                             }
@@ -95,6 +96,7 @@ public class SecureShellWS {
                         // input from user
                         // System.out.println(command);
                         schSession.getCommander().print(command);
+                        schSession.getKeyBoardCapture().append(command);
                     }
                 }
 
@@ -105,8 +107,8 @@ public class SecureShellWS {
         }
 
 
-
     }
+
     @OnError
     public void onError(Session session, Throwable t) {
         log.error(t.toString(), t);
@@ -133,6 +135,10 @@ public class SecureShellWS {
                     schSession.setInputToChannel(null);
                     schSession.setCommander(null);
                     schSession.setOutFromChannel(null);
+
+                    schSession.getKeyBoardCapture().saveCapture();
+                    schSession.setKeyBoardCapture(null);
+
                     schSession = null;
                     //remove from map
                     schSessionMap.remove(sessionKey);

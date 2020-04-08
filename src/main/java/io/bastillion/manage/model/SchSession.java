@@ -47,7 +47,15 @@ public class SchSession {
     InputStream outFromChannel;
     OutputStream inputToChannel;
     HostSystem hostSystem;
+    KeyBoardCapture keyBoardCapture;
 
+    public void setKeyBoardCapture(KeyBoardCapture keyBoardCapture) {
+        this.keyBoardCapture = keyBoardCapture;
+    }
+
+    public KeyBoardCapture getKeyBoardCapture() {
+        return keyBoardCapture;
+    }
 
     public Session getSession() {
         return session;

@@ -164,7 +164,7 @@ public class UploadAndPushKtrl extends BaseKontroller {
 
                     try {
                         // rename the file
-                        String name = UUID.randomUUID().toString();
+                        String name = UUID.randomUUID().toString().replace("-", "");
                         File f = new File(UPLOAD_PATH + "/" + name);
                         FileUtils.moveFile(new File(UPLOAD_PATH + "/" + uploadFileName), f);
 

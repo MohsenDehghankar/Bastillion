@@ -1,11 +1,9 @@
 package io.bastillion.manage.util;
 
 
-import io.bastillion.manage.db.SessionAuditDB;
-import io.bastillion.manage.db.UserDB;
-import io.bastillion.manage.model.HostSystem;
-import io.bastillion.manage.model.SessionOutput;
-import io.bastillion.manage.model.User;
+
+import io.bastillion.manage.model.*;
+
 
 /**
  * representing one line of command ( input and output ) in a terminal
@@ -31,17 +29,16 @@ public class CommandLine {
         if (value[0] == 13) {
             // enter pressed
             // create log
-            SessionOutput output = new SessionOutput(sessionId, hostSystem);
-            output.setOutput(command);
-            SessionOutputUtil.sendLog(user, output);
-            // TODO: 4/7/20  check editor using
-            // TODO: 4/7/20 check dangerous command
-            clear();
+            sendLog(command);
+            // one command finished
+            command = new StringBuilder("");
         }
     }
 
-    public void clear() {
-        // one command finished
-        command = new StringBuilder("");
+
+    private void sendLog(StringBuilder log) {
+        SessionOutput output = new SessionOutput(sessionId, hostSystem);
+        output.setOutput(log);
+        SessionOutputUtil.sendLog(user, output);
     }
 }

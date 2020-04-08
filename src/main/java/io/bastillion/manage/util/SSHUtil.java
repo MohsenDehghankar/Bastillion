@@ -77,7 +77,6 @@ public class SSHUtil {
     public static final int CHANNEL_TIMEOUT = 60000;
 
 
-
     private SSHUtil() {
     }
 
@@ -323,7 +322,6 @@ public class SSHUtil {
             c.put(file, destination);
 
 
-
         } catch (Exception e) {
             log.info(e.toString(), e);
             hostSystem.setErrorMsg(e.getMessage());
@@ -516,6 +514,9 @@ public class SSHUtil {
             schSession.setInputToChannel(inputToChannel);
             schSession.setOutFromChannel(outFromChannel);
             schSession.setHostSystem(hostSystem);
+
+
+            schSession.setKeyBoardCapture(new KeyBoardCapture(sessionId, instanceId, userId, hostSystem));
 
             //refresh keys for session
             addPubKey(hostSystem, session, appKey.getPublicKey());

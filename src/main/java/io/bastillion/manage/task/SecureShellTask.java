@@ -117,8 +117,6 @@ public class SecureShellTask implements Runnable {
             SessionOutputUtil.removeOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId());
 
         } catch (Exception ex) {
-            // TODO: 4/7/20
-            ex.printStackTrace();
             log.error(ex.toString(), ex);
         }
     }
