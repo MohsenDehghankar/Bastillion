@@ -75,7 +75,7 @@ public class SessionAuditKtrl extends BaseKontroller {
 
         if (sortedSet.getOrderByField() == null || sortedSet.getOrderByField().trim().equals("")) {
             sortedSet.setOrderByField(SessionAuditDB.SORT_BY_SESSION_TM);
-            sortedSet.setOrderByDirection("desc");
+            sortedSet.setOrderByDirection("description");
         }
 
 

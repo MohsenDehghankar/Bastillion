@@ -2,7 +2,7 @@
 <Configuration>
 
     <Appenders>
-       <!-- <Console name="console" target="SYSTEM_OUT">
+        <!--<Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %-5p %c{1} - %m%n"/>
         </Console>-->
        
@@ -26,7 +26,7 @@
 
     <Loggers>
         
-        <!--<Logger name="io.bastillion.manage.util.SystemAudit" level="info" additivity="false">
+       <!-- <Logger name="io.bastillion.manage.util.SystemAudit" level="info" additivity="false">
             <AppenderRef ref="audit-appender"/>
         </Logger>
         <Logger name="io.bastillion.manage.control.LoginAudit" level="info" additivity="false">
@@ -38,11 +38,12 @@
         <Logger name="audit-sysLogger" level="info" additivity="false">
             <AppenderRef ref="audit-RFC5424"/>
         </Logger>
-        <!--
-        <Logger name="io.bastillion.manage.control.LoginAudit" level="info" additivity="false">
+        <!--<Logger name="io.bastillion.manage.control.LoginAudit" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        -->
+        <Root level="info">
+            <AppenderRef ref="console"/>
+        </Root>-->
         <Root level="info">
 <!--            <AppenderRef ref="login-RFC5424"/>-->
             <AppenderRef ref="audit-RFC5424"/>

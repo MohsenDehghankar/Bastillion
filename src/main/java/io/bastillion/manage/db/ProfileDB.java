@@ -98,7 +98,7 @@ public class ProfileDB {
                 Profile profile = new Profile();
                 profile.setId(rs.getLong("id"));
                 profile.setNm(rs.getString("nm"));
-                profile.setDesc(rs.getString("desc"));
+                profile.setDesc(rs.getString("description"));
                 profileList.add(profile);
 
             }
@@ -135,7 +135,7 @@ public class ProfileDB {
                 Profile profile = new Profile();
                 profile.setId(rs.getLong("id"));
                 profile.setNm(rs.getString("nm"));
-                profile.setDesc(rs.getString("desc"));
+                profile.setDesc(rs.getString("description"));
                 profileList.add(profile);
 
             }
@@ -194,7 +194,7 @@ public class ProfileDB {
                 profile = new Profile();
                 profile.setId(rs.getLong("id"));
                 profile.setNm(rs.getString("nm"));
-                profile.setDesc(rs.getString("desc"));
+                profile.setDesc(rs.getString("description"));
                 profile.setHostSystemList(ProfileSystemsDB.getSystemsByProfile(con, profileId));
 
             }
@@ -219,7 +219,7 @@ public class ProfileDB {
         Connection con = null;
         try {
             con = DBUtils.getConn();
-            PreparedStatement stmt = con.prepareStatement("insert into profiles (nm, desc) values (?,?)");
+            PreparedStatement stmt = con.prepareStatement("insert into profiles (nm, description) values (?,?)");
             stmt.setString(1, profile.getNm());
             stmt.setString(2, profile.getDesc());
             stmt.execute();
@@ -244,7 +244,7 @@ public class ProfileDB {
         Connection con = null;
         try {
             con = DBUtils.getConn();
-            PreparedStatement stmt = con.prepareStatement("update profiles set nm=?, desc=? where id=?");
+            PreparedStatement stmt = con.prepareStatement("update profiles set nm=?, description=? where id=?");
             stmt.setString(1, profile.getNm());
             stmt.setString(2, profile.getDesc());
             stmt.setLong(3, profile.getId());

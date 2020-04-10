@@ -130,7 +130,7 @@ public class UserProfileDB {
                 Profile profile = new Profile();
                 profile.setId(rs.getLong("id"));
                 profile.setNm(rs.getString("nm"));
-                profile.setDesc(rs.getString("desc"));
+                profile.setDesc(rs.getString("description"));
                 profileList.add(profile);
             }
             DBUtils.closeRs(rs);

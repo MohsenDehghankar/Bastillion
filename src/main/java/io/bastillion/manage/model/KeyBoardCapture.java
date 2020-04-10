@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -40,6 +41,8 @@ public class KeyBoardCapture {
     static {
         try {
             Files.createDirectory(Paths.get(DIR));
+        }catch (FileAlreadyExistsException e){
+            // file exists
         } catch (IOException e) {
             log.error(e.toString(), e);
         }
