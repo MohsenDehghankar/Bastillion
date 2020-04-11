@@ -1,29 +1,29 @@
 /**
- *    Copyright (C) 2017 Loophole, LLC
- *
- *    This program is free software: you can redistribute it and/or  modify
- *    it under the terms of the GNU Affero General Public License, version 3,
- *    as published by the Free Software Foundation.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- *
- *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *    As a special exception, the copyright holders give permission to link the
- *    code of portions of this program with the OpenSSL library under certain
- *    conditions as described in each individual source file and distribute
- *    linked combinations including the program with the OpenSSL library. You
- *    must comply with the GNU Affero General Public License in all respects for
- *    all of the code used other than as permitted herein. If you modify file(s)
- *    with this exception, you may extend this exception to your version of the
- *    file(s), but you are not obligated to do so. If you do not wish to do so,
- *    delete this exception statement from your version. If you delete this
- *    exception statement from all source files in the program, then also delete
- *    it in the license file.
+ * Copyright (C) 2017 Loophole, LLC
+ * <p>
+ * This program is free software: you can redistribute it and/or  modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * As a special exception, the copyright holders give permission to link the
+ * code of portions of this program with the OpenSSL library under certain
+ * conditions as described in each individual source file and distribute
+ * linked combinations including the program with the OpenSSL library. You
+ * must comply with the GNU Affero General Public License in all respects for
+ * all of the code used other than as permitted herein. If you modify file(s)
+ * with this exception, you may extend this exception to your version of the
+ * file(s), but you are not obligated to do so. If you do not wish to do so,
+ * delete this exception statement from your version. If you delete this
+ * exception statement from all source files in the program, then also delete
+ * it in the license file.
  */
 package io.bastillion.manage.util;
 
@@ -33,6 +33,10 @@ import io.bastillion.manage.db.UserDB;
 import io.bastillion.manage.db.UserProfileDB;
 import io.bastillion.manage.model.Auth;
 import io.bastillion.manage.model.User;
+import net.sourceforge.jradiusclient.*;
+import net.sourceforge.jradiusclient.exception.InvalidParameterException;
+import net.sourceforge.jradiusclient.exception.RadiusException;
+import net.sourceforge.jradiusclient.util.ChapUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +57,9 @@ import javax.security.auth.callback.*;
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.security.Principal;
 import java.sql.Connection;
@@ -316,5 +322,87 @@ public class ExternalAuthUtil {
             }
         }
         return allRoles;
+    }
+
+    public static String radiusLogin(Auth auth) {
+        String host = AppConfig.getProperty("radiusHost");
+        int authPort = Integer.parseInt(AppConfig.getProperty("radiusAuthPort"));
+        int acctPort = Integer.parseInt(AppConfig.getProperty("radiusAcctPort"));
+        String sharedSecret = AppConfig.getProperty("radiusSharedSecret");
+
+        RadiusClient rc = null;
+        try {
+            rc = new RadiusClient(host, authPort, acctPort, sharedSecret);
+        } catch (RadiusException rex) {
+            log.error(rex.getMessage(), rex);
+        } catch (InvalidParameterException ivpex) {
+            log.error(ivpex.getMessage(), ivpex);
+        }
+        int response = basicAuthenticate(rc, auth.getUsername(), auth.getPassword());
+        String authToken = null;
+        switch (response) {
+            case 1:
+                // success
+                authToken = UUID.randomUUID().toString();
+                Connection conn = DBUtils.getConn();
+                User user = AuthDB.getUserByUID(conn, auth.getUsername());
+                if (user == null) {
+                    user = new User();
+                    user.setUsername(auth.getUsername());
+                    user.setPassword(auth.getPassword());
+                    user.setUserType(User.ADMINISTRATOR);
+                    user.setFirstNm("no firstname set");
+                    user.setLastNm("no lastname set");
+                    user.setEmail("no email set");
+                    user.setId(UserDB.insertUser(user));
+                } else {
+                    user.setPassword(auth.getPassword());
+                }
+                user.setAuthToken(authToken);
+                user.setAuthType(Auth.AUTH_EXTERNAL);
+                AuthDB.updateLogin(conn, user);
+                DBUtils.closeConn(conn);
+                break;
+            case 2:
+                // failed
+                return null;
+            case 3:
+                // challenge
+                return null;
+            case 4:
+                return null;
+            case 5:
+                return null;
+        }
+        return authToken;
+    }
+
+    private static int basicAuthenticate(final RadiusClient rc, String username, String password) {
+        try {
+            RadiusPacket accessRequest = new RadiusPacket(RadiusPacket.ACCESS_REQUEST);
+            RadiusAttribute userNameAttribute = new RadiusAttribute(RadiusAttributeValues.USER_NAME, username.getBytes());
+            accessRequest.setAttribute(userNameAttribute);
+            RadiusAttribute passwordAtr = new RadiusAttribute(RadiusAttributeValues.USER_PASSWORD, password.getBytes());
+            accessRequest.setAttribute(passwordAtr);
+            RadiusPacket accessResponse = rc.authenticate(accessRequest);
+            switch (accessResponse.getPacketType()) {
+                case RadiusPacket.ACCESS_ACCEPT:
+                    log.info("RADIUS authentication ACCEPT");
+                    return 1;
+                case RadiusPacket.ACCESS_REJECT:
+                    log.info("RADIUS authentication REJECT");
+                    return 2;
+                case RadiusPacket.ACCESS_CHALLENGE:
+                    log.info("RADIUS authentication CHALLENGE");
+                    return 3;
+                default:
+                    log.info("RADIUS unknown response");
+                    return 4;
+            }
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return 5;
+        }
     }
 }

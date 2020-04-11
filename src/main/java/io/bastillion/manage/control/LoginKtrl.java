@@ -93,13 +93,13 @@ public class LoginKtrl extends BaseKontroller {
                     }
                 }
                 //check to see if admin has any assigned profiles
-                if (!User.MANAGER.equals(user.getUserType()) && (user.getProfileList() == null || user.getProfileList().size() <= 0)) {
+                /*if (!User.MANAGER.equals(user.getUserType()) && (user.getProfileList() == null || user.getProfileList().size() <= 0)) {
                     // logging
                     syslogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_NO_PROFILE);
                     //loginAuditLogger.info(auth.getUsername() + " (" + clientIP + ") - " + AUTH_ERROR_NO_PROFILE);
                     addError(AUTH_ERROR_NO_PROFILE);
                     return "/login.html";
-                }
+                }*/
 
                 //check to see if account has expired
                 if (user.isExpired()) {

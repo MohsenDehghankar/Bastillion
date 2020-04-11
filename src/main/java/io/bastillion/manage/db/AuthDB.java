@@ -66,11 +66,12 @@ public class AuthDB {
     public static String login(Auth auth) {
         //check ldap first
         String authToken = ExternalAuthUtil.login(auth);
-        
+
+        //radius login
+        authToken = ExternalAuthUtil.radiusLogin(auth);
+
         if (StringUtils.isEmpty(authToken)) {
-
             Connection con = null;
-
             try {
                 con = DBUtils.getConn();
 
