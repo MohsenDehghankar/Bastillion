@@ -114,10 +114,10 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
             statement = connection.createStatement();
 
 
-            ResultSet rs = statement.executeQuery("select * from information_schema.tables where upper(table_name) = 'USERS' and table_schema='PUBLIC'");
+            ResultSet rs = statement.executeQuery("select * from information_schema.tables where table_name = 'users' or table_name = 'application_key' or table_name = 'public_keys'");
             if (!rs.next()) {
                 resetSSHKey = true;
-
+                System.out.println("creating database tables");
                 //create DB objects
                 statement.executeUpdate("create table if not exists users (id INTEGER PRIMARY KEY AUTO_INCREMENT, first_nm varchar(100),  last_nm varchar(100),  email varchar(100),  username varchar(100) not null unique, password varchar(100),  auth_token varchar(1000),  auth_type varchar(100) not null default '" + Auth.AUTH_BASIC + "', user_type varchar(100) not null default '" + Auth.ADMINISTRATOR + "', salt varchar(1000),  otp_secret varchar(1000),  last_login_tm timestamp, expiration_tm timestamp)");
                 statement.executeUpdate("create table if not exists user_theme (user_id INTEGER PRIMARY KEY, bg varchar(7), fg varchar(7), d1 varchar(7), d2 varchar(7), d3 varchar(7), d4 varchar(7), d5 varchar(7), d6 varchar(7), d7 varchar(7), d8 varchar(7), b1 varchar(7), b2 varchar(7), b3 varchar(7), b4 varchar(7), b5 varchar(7), b6 varchar(7), b7 varchar(7), b8 varchar(7), foreign key (user_id) references users(id) on delete cascade) ");
@@ -168,7 +168,6 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
 
             //if reset ssh application key then generate new key
             if (resetSSHKey) {
-
                 //delete old key entry
                 PreparedStatement pStmt = connection.prepareStatement("delete from application_key");
                 pStmt.execute();
