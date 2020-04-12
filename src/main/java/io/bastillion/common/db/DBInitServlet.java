@@ -188,7 +188,8 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
                     // profile id (null == all systems)
                     pStmt.setString(6, null);
                     // enabled
-                    pStmt.setString(7, "false");
+                    //pStmt.setString(7, "false");
+                    pStmt.setBoolean(7,false);
                     pStmt.execute();
                     DBUtils.closeStmt(pStmt);
                 }

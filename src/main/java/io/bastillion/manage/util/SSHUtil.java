@@ -41,6 +41,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.objectweb.asm.tree.FrameNode;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +79,13 @@ public class SSHUtil {
     public static final int SESSION_TIMEOUT = 60000;
     public static final int CHANNEL_TIMEOUT = 60000;
 
+    static {
+        try {
+            Files.createDirectory(Paths.get("./src/main/webapp/download/"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private SSHUtil() {
     }

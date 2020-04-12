@@ -284,6 +284,7 @@ public class UploadAndPushKtrl extends BaseKontroller {
             User user = UserDB.getUser(userId);
             SessionOutput sessionOutput = new SessionOutput(sessionId, hostSystem);
             sessionOutput.setOutput(new StringBuilder("download from " + filepath + " to " + address));
+            Gson gson = new GsonBuilder().registerTypeAdapter(AuditWrapper.class, new SessionOutputSerializer()).create();
             log.info(gson.toJson(new AuditWrapper(user, sessionOutput)));
 
         }

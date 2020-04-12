@@ -2,10 +2,10 @@
 <Configuration>
 
     <Appenders>
-        <!--<Console name="console" target="SYSTEM_OUT">
+     <!--   <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %-5p %c{1} - %m%n"/>
-        </Console>-->
-       
+        </Console>
+       -->
         <!--<File name="audit-appender" fileName="/var/log/bastillion-audit.log" append="true">
             <PatternLayout pattern="%d %-5p %c{1} - %m%n"/>
         </File>
