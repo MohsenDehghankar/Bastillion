@@ -16,3 +16,4 @@ target/*
 .project
 .settings/*
 /src/main/resources/BastillionConfig.properties
+/src/main/resources/BastillionConfig.properties
