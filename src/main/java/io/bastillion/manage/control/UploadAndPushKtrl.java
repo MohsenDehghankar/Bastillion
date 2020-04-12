@@ -278,7 +278,14 @@ public class UploadAndPushKtrl extends BaseKontroller {
 //            System.out.println(getRequest().getRemoteHost());
             address = addr + name;
             downloadDone = "done";
-            // todo logging
+            // download logging
+            Long userId = AuthUtil.getUserId(getRequest().getSession());
+            Long sessionId = AuthUtil.getSessionId(getRequest().getSession());
+            User user = UserDB.getUser(userId);
+            SessionOutput sessionOutput = new SessionOutput(sessionId, hostSystem);
+            sessionOutput.setOutput(new StringBuilder("download from " + filepath + " to " + address));
+            log.info(gson.toJson(new AuditWrapper(user, sessionOutput)));
+
         }
         getRequest().getSession().setAttribute(SecurityFilter._CSRF,
                 getRequest().getParameter(SecurityFilter._CSRF));
