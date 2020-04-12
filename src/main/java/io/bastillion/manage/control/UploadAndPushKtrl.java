@@ -30,12 +30,11 @@ package io.bastillion.manage.control;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.bastillion.common.util.AuthUtil;
+import io.bastillion.manage.db.SystemDB;
 import io.bastillion.manage.db.SystemStatusDB;
 import io.bastillion.manage.db.UserDB;
-import io.bastillion.manage.model.AuditWrapper;
-import io.bastillion.manage.model.FileTransferAuditWrapper;
-import io.bastillion.manage.model.HostSystem;
-import io.bastillion.manage.model.SchSession;
+import io.bastillion.manage.model.*;
+import io.bastillion.manage.model.SortedSet;
 import io.bastillion.manage.util.DBUtils;
 import io.bastillion.manage.util.FileTransferAuditSerializer;
 import io.bastillion.manage.util.SSHUtil;
@@ -57,6 +56,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 
 public class UploadAndPushKtrl extends BaseKontroller {
@@ -81,6 +82,16 @@ public class UploadAndPushKtrl extends BaseKontroller {
     HostSystem pendingSystemStatus;
     @Model(name = "currentSystemStatus")
     HostSystem currentSystemStatus;
+    @Model(name = "allocatedSystemList")
+    List<HostSystem> allocatedSystemList = new ArrayList<>();
+    @Model(name = "systemSelectId")
+    List<Long> systemSelectId = new ArrayList<>();
+    @Model(name = "path")
+    String filepath;
+    @Model(name = "downloadDone")
+    String downloadDone = "wait";
+    @Model(name = "address")
+    String address = "";
 
 
     public UploadAndPushKtrl(HttpServletRequest request, HttpServletResponse response) {
@@ -95,6 +106,22 @@ public class UploadAndPushKtrl extends BaseKontroller {
 
         return "/admin/upload.html";
 
+    }
+
+    @Kontrol(path = "/admin/setDownload", method = MethodType.GET)
+    public String setDownload() throws Exception {
+        Long userId = AuthUtil.getUserId(getRequest().getSession());
+        io.bastillion.manage.model.SortedSet sortedSet = new SortedSet();
+        sortedSet.setOrderByField(SystemDB.SORT_BY_NAME);
+        if (Auth.MANAGER.equals(AuthUtil.getUserType(getRequest().getSession()))) {
+            sortedSet = SystemDB.getSystemSet(sortedSet);
+        } else {
+            sortedSet = SystemDB.getUserSystemSet(sortedSet, userId);
+        }
+        if (sortedSet != null && sortedSet.getItemList() != null) {
+            allocatedSystemList = (List<HostSystem>) sortedSet.getItemList();
+        }
+        return "/admin/download.html";
     }
 
 
@@ -124,6 +151,11 @@ public class UploadAndPushKtrl extends BaseKontroller {
 
             hostSystemList = SystemStatusDB.getAllSystemStatus(userId);
 
+            String username = AuthUtil.getUsername(getRequest().getSession());
+            Long sessionId = AuthUtil.getSessionId(getRequest().getSession());
+            for (HostSystem hostSystem : hostSystemList) {
+                log.info("User:" + username + " SessionId:" + sessionId + " host:" + hostSystem.getHost() + " uploaded to:" + pushDir + "/" + uploadFileName);
+            }
 
         } catch (Exception e) {
             log.error(e.toString(), e);
@@ -224,6 +256,33 @@ public class UploadAndPushKtrl extends BaseKontroller {
                 getRequest().getParameter(SecurityFilter._CSRF));
 
         return "/admin/upload_result.html";
+    }
+
+    @Kontrol(path = "/admin/downloadFile", method = MethodType.POST)
+    public String downloadFile() throws Exception {
+
+
+        String retVal = "/admin/download_result.html";
+        if (systemSelectId != null && !systemSelectId.isEmpty()) {
+            Connection conn = DBUtils.getConn();
+            HostSystem hostSystem = SystemDB.getSystem(conn, systemSelectId.get(0));
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            //download to /downloads
+            String name = SSHUtil.download(hostSystem, filepath, "");
+            String addr = getRequest().getRequestURL().toString();
+            addr = (addr.substring(0, addr.indexOf("admin") - 1));
+//            System.out.println(getRequest().getRemoteHost());
+            address = addr + name;
+            downloadDone = "done";
+            // todo logging
+        }
+        getRequest().getSession().setAttribute(SecurityFilter._CSRF,
+                getRequest().getParameter(SecurityFilter._CSRF));
+        return "/admin/download_result.html";
     }
 
 }

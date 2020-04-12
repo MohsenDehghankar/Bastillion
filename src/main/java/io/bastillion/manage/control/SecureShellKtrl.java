@@ -33,6 +33,7 @@ import io.bastillion.manage.db.*;
 import io.bastillion.manage.model.*;
 import io.bastillion.manage.db.*;
 import io.bastillion.manage.model.*;
+import io.bastillion.manage.util.DBUtils;
 import io.bastillion.manage.util.SSHUtil;
 import loophole.mvc.annotation.Kontrol;
 import loophole.mvc.annotation.MethodType;
@@ -45,6 +46,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +80,10 @@ public class SecureShellKtrl extends BaseKontroller {
     UserSettings userSettings;
     @Model(name = "script")
     Script script = new Script();
+    @Model(name = "path")
+    String filepath;
+    @Model(name = "downloadDone")
+    String downloadDone = "wait";
 
 
     public SecureShellKtrl(HttpServletRequest request, HttpServletResponse response) {

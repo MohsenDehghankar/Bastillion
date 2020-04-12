@@ -157,6 +157,11 @@
                 $("#upload_push_dialog").modal();
             });
 
+            $('#download').click(function () {
+                $("#download_frame").attr("src", "setDownload.ktrl"  + "?_csrf=" + [[${session._csrf}]]);
+                $("#download_dialog").modal();
+            });
+
             [# th:if= "${currentSystemStatus != null && (#strings.equals(currentSystemStatus.statusCd, 'GENERICFAIL') || #strings.equals(currentSystemStatus.statusCd, 'HOSTFAIL'))}"]
                 $("#error_dialog").modal();
             [/]
@@ -563,6 +568,7 @@
 <!--                                <li><a id="dup_session" href="#">Duplicate Session</a></li>-->
                                 <li><a id="reset_size" href="#">Reset Size</a></li>
                                 <li><a id="disconnect" href="#">Disconnect</a></li>
+                                <li><a id="download"  href="#">Download file</a></li>
                             </ul>
                         </li>
                         <li><a type="hidden" id="go_top_link" href="#" onclick="scrollTo(0,0)">Go To Top</a> </li>
@@ -625,6 +631,38 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-default connect_btn" data-dismiss="modal">Connect</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="download_dialog" class="modal fade">
+    <div class="modal-dialog" style="width:700px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <h4 class="modal-title">Download File</h4>
+            </div>
+            <div class="modal-body">
+                <iframe id="download_frame" width="680px" height="300px" style="border: none;">
+                    <!--<div class="row">
+                        <select id="downloadId" name="downloadId" title="Download File"
+                                class="host_frm_select">
+                            <option th:each="s : ${allocatedSystemList}"
+                                    th:value="${s.id}" th:text="${s.displayLabel}"></option>
+                        </select>
+                    </div>
+                    <div>
+                        <td>
+                            <strong>File Full Path:</strong>
+                        </td>
+                        <td>
+                            <input id="path" name="path" type="text" title="File Full Path" required="required" th:value="${path}"/>
+                        </td>
+                    </div>-->
+                </iframe>
+            </div>
+            <div class="modal-footer">
             </div>
         </div>
     </div>

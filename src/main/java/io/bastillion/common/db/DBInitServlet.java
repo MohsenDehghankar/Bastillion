@@ -245,6 +245,8 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
         }
 
         RefreshAuthKeyUtil.startRefreshAllSystemsTimerTask();
+        // remove downloaded files
+        RemoveDownloadedFilesUtil.startRemoveDownloadsTask();
     }
 
 }

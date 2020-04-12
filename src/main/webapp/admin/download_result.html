@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:with="isFrame=true">
+
+    <meta th:replace="_res/inc/header"/>
+
+
+    <title> Bastillion - Download File </title>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function () {
+            var uploadScrollWrapper = $('.uploadScrollWrapper');
+            if (uploadScrollWrapper.height() >= 200) {
+
+                uploadScrollWrapper.addClass('uploadScrollWrapperActive');
+                $('.uploadScrollableTable').floatThead({
+                    scrollContainer: function ($table) {
+                        return $table.closest(".uploadScrollWrapper");
+                    }
+                });
+            }
+            $(".uploadScrollableTable tr:even").css("background-color", "#e0e0e0");
+        });
+        /*]]>*/
+    </script>
+    <style>
+        body {
+            padding: 10px;
+            background: #FFFFFF;
+        }
+    </style>
+
+</head>
+<body>
+
+<h4>Download Status</h4>
+
+
+<div class="uploadScrollWrapper">
+
+    <table class="table-striped uploadScrollableTable">
+        <thead>
+
+        <tr>
+
+            <th>Download Status</th>
+            <th>Result URL</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr>
+
+            <td>
+                <div class="warning" th:if="${#strings.equals(downloadDone,'wait')}">downloading ..</div>
+                <div class="success" th:if="${#strings.equals(downloadDone, 'done')}">download done</div>
+            </td>
+            <td th:text="${address}">
+            </td>
+
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

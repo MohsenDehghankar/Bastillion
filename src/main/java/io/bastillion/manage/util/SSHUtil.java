@@ -38,6 +38,7 @@ import io.bastillion.manage.task.SecureShellTask;
 import io.bastillion.manage.model.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.objectweb.asm.tree.FrameNode;
 
 import java.io.*;
 import java.util.HashMap;
@@ -338,6 +339,65 @@ public class SSHUtil {
 
         return hostSystem;
 
+    }
+
+    private static String getAlphaNumericString(int n)
+    {
+
+        // chose a Character random from this String
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                + "0123456789"
+                + "abcdefghijklmnopqrstuvxyz";
+
+        // create StringBuffer size of AlphaNumericString
+        StringBuilder sb = new StringBuilder(n);
+
+        for (int i = 0; i < n; i++) {
+
+            // generate a random number between
+            // 0 to AlphaNumericString variable length
+            int index
+                    = (int)(AlphaNumericString.length()
+                    * Math.random());
+
+            // add Character one by one in end of sb
+            sb.append(AlphaNumericString
+                    .charAt(index));
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * download from server
+     */
+    public static String download(HostSystem hostSystem, String source, String destination){
+        JSch jsch = new JSch();
+        Channel channel = null;
+        ChannelSftp c = null;
+        String randomName = null;
+        try {
+            ApplicationKey appKey = PrivateKeyDB.getApplicationKey();
+            jsch.addIdentity(appKey.getId().toString(), appKey.getPrivateKey().trim().getBytes(), appKey.getPublicKey().getBytes(), appKey.getPassphrase().getBytes());
+            Session session = jsch.getSession(hostSystem.getUser(), hostSystem.getHost(), hostSystem.getPort());
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.setConfig("PreferredAuthentications", "publickey,keyboard-interactive,password");
+            session.setServerAliveInterval(SERVER_ALIVE_INTERVAL);
+            session.connect(SESSION_TIMEOUT);
+            channel = session.openChannel("sftp");
+            channel.connect();
+            c = ((ChannelSftp) channel);
+            randomName = getAlphaNumericString(30);
+            c.get(source, "./src/main/webapp/download/" + randomName);
+            channel.disconnect();
+            c.disconnect();
+//            System.out.println("download done");
+            session.disconnect();
+        } catch (JSchException | SftpException e) {
+            log.error(e.toString(), e);
+//            e.printStackTrace();
+        }
+        return "/download/" + randomName;
     }
 
 

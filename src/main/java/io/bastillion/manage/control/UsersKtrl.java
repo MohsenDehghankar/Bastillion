@@ -93,10 +93,17 @@ public class UsersKtrl extends BaseKontroller {
 
     @Kontrol(path = "/manage/deleteUser", method = MethodType.GET)
     public String deleteUser() {
-
+/*
         if (user.getId() != null && !user.getId().equals(AuthUtil.getUserId(getRequest().getSession()))) {
             UserDB.deleteUser(user.getId());
             PublicKeyDB.deleteUserPublicKeys(user.getId());
+            RefreshAuthKeyUtil.refreshAllSystems();
+        }
+        return "redirect:/manage/viewUsers.ktrl?sortedSet.orderByDirection=" + sortedSet.getOrderByDirection() + "&sortedSet.orderByField=" + sortedSet.getOrderByField();*/
+        String userType = AuthUtil.getUserType(getRequest().getSession());
+        if (user.getId() != null && !user.getId().equals(AuthUtil.getUserId(getRequest().getSession()))) {
+            UserDB.deleteUser(user.getId());
+            //PublicKeyDB.deleteUserPublicKeys(user.getId());
             RefreshAuthKeyUtil.refreshAllSystems();
         }
         return "redirect:/manage/viewUsers.ktrl?sortedSet.orderByDirection=" + sortedSet.getOrderByDirection() + "&sortedSet.orderByField=" + sortedSet.getOrderByField();

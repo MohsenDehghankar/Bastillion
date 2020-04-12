@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:with="isFrame=true">
+
+    <meta th:replace="_res/inc/header"/>
+
+    <script th:inline="javascript">
+        //function that downloads file from server
+        $(document).ready(function () {
+
+
+            $("#download_btn").button().click(function () {
+                $('#download').submit();
+            });
+        });
+
+    </script>
+    <style>
+        body {
+            padding: 10px;
+            background: #FFFFFF;
+        }
+    </style>
+
+    <title>Bastillion - Download File</title>
+</head>
+
+<!--$('.download_btn').click(function () {
+var hostId = $('#downloadId').val();
+var path = $('#path').val();
+$.getJSON('../admin/downloadFile.ktrl?systemSelectId=' + hostId + '&_csrf=' + [[${session._csrf}]] + '&path=' + path);
+});-->
+
+<body>
+<!--<script>
+    function getUrlParam(parameter, defaultvalue){
+        var urlparameter = defaultvalue;
+        if(window.location.href.indexOf(parameter) > -1){
+            urlparameter = getUrlVars()[parameter];
+        }
+        return urlparameter;
+    }
+
+    var done = getUrlParam("done", "false");
+    console.warn(done);
+    if (done === "true"){
+        console.warn("done");
+        document.getElementById("td-done").innerText = done;
+    }
+</script>-->
+<!--<template>-->
+
+
+<form id="download" th:action="@{/admin/downloadFile.ktrl} + '?_csrf=' + ${session._csrf}" method="post">
+    <select id="systemSelectId" name="systemSelectId" title="Download File"
+            class="host_frm_select">
+        <option th:each="s : ${allocatedSystemList}"
+                th:value="${s.id}" th:text="${s.displayLabel}"></option>
+    </select>
+    <td>
+        <strong>File Full Path:</strong>
+    </td>
+    <td>
+        <input id="path" name="path" type="text" title="File Full Path" required="required" th:value="${path}"/>
+    </td>
+    <button id="download_btn" type="button" class="btn btn-default download_btn" data-dismiss="modal">Download</button>
+</form>
+
+
+<!--<div class="row">
+    <select id="downloadId" name="downloadId" title="Download File"
+            class="host_frm_select">
+        <option th:each="s : ${allocatedSystemList}"
+                th:value="${s.id}" th:text="${s.displayLabel}"></option>
+    </select>
+</div>
+<div>
+    <td>
+        <strong>File Full Path:</strong>
+    </td>
+    <td>
+        <input id="path" name="path" type="text" title="File Full Path" required="required" th:value="${path}"/>
+    </td>
+&lt;!&ndash;    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>&ndash;&gt;
+    <button type="button" class="btn btn-default download_btn" data-dismiss="modal">Download</button>
+</div>-->
+<!--</template>-->
+
+</body>
+</html>
