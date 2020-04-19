@@ -199,6 +199,15 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
             DBUtils.closeRs(rs);
 
             //if reset ssh application key then generate new key
+            // check application key table
+            String sql = "select count(*) from application_key";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+            if(resultSet.getInt("count(*)") == 0)
+                resetSSHKey = true;
+            DBUtils.closeRs(resultSet);
+
             if (resetSSHKey) {
                 //delete old key entry
                 PreparedStatement pStmt = connection.prepareStatement("delete from application_key");

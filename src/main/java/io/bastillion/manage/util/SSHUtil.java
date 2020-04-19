@@ -83,7 +83,7 @@ public class SSHUtil {
         try {
             Files.createDirectory(Paths.get("./src/main/webapp/download/"));
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
