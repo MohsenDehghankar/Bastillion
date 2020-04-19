@@ -24,7 +24,7 @@ public class KeyBoardCapture {
     private static Logger log = LoggerFactory.getLogger(KeyBoardCapture.class);
 
     // prohibited strings
-    private static final String[] PROHIBITS = new String[]{"authorized_ke", "ssh_con", "sshd_con"};
+    private static final String[] PROHIBITS = new String[]{"authorized_ke", "ssh_con", "sshd_con", "passwd"};
 
     String filePath;
     StringBuilder keyBoardInput;
