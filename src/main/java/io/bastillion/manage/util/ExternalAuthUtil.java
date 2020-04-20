@@ -335,8 +335,13 @@ public class ExternalAuthUtil {
             rc = new RadiusClient(host, authPort, acctPort, sharedSecret);
         } catch (RadiusException rex) {
             log.error(rex.getMessage(), rex);
+            return null;
         } catch (InvalidParameterException ivpex) {
             log.error(ivpex.getMessage(), ivpex);
+            return null;
+        } catch (Exception e) {
+            log.error("unknown exception from RADIUS server");
+            return null;
         }
         int response = basicAuthenticate(rc, auth.getUsername(), auth.getPassword());
         String authToken = null;
