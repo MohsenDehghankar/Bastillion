@@ -1,29 +1,29 @@
 /**
- *    Copyright (C) 2013 Loophole, LLC
- *
- *    This program is free software: you can redistribute it and/or  modify
- *    it under the terms of the GNU Affero General Public License, version 3,
- *    as published by the Free Software Foundation.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- *
- *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *    As a special exception, the copyright holders give permission to link the
- *    code of portions of this program with the OpenSSL library under certain
- *    conditions as described in each individual source file and distribute
- *    linked combinations including the program with the OpenSSL library. You
- *    must comply with the GNU Affero General Public License in all respects for
- *    all of the code used other than as permitted herein. If you modify file(s)
- *    with this exception, you may extend this exception to your version of the
- *    file(s), but you are not obligated to do so. If you do not wish to do so,
- *    delete this exception statement from your version. If you delete this
- *    exception statement from all source files in the program, then also delete
- *    it in the license file.
+ * Copyright (C) 2013 Loophole, LLC
+ * <p>
+ * This program is free software: you can redistribute it and/or  modify
+ * it under the terms of the GNU Affero General Public License, version 3,
+ * as published by the Free Software Foundation.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * <p>
+ * As a special exception, the copyright holders give permission to link the
+ * code of portions of this program with the OpenSSL library under certain
+ * conditions as described in each individual source file and distribute
+ * linked combinations including the program with the OpenSSL library. You
+ * must comply with the GNU Affero General Public License in all respects for
+ * all of the code used other than as permitted herein. If you modify file(s)
+ * with this exception, you may extend this exception to your version of the
+ * file(s), but you are not obligated to do so. If you do not wish to do so,
+ * delete this exception statement from your version. If you delete this
+ * exception statement from all source files in the program, then also delete
+ * it in the license file.
  */
 package io.bastillion.manage.db;
 
@@ -39,9 +39,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +53,13 @@ public class AuthDB {
 
     public static final int EXPIRATION_DAYS = StringUtils.isNumeric(AppConfig.getProperty("accountExpirationDays")) ? Integer.parseInt(AppConfig.getProperty("accountExpirationDays")) : -1;
 
+    private static List<String> noRadiusUsers;
+
+    static {
+        String noRadius = AppConfig.getProperty("noRadius");
+        noRadiusUsers = Arrays.asList(noRadius.split("-"));
+    }
+
     private AuthDB() {
     }
 
@@ -65,12 +71,14 @@ public class AuthDB {
      */
     public static String login(Auth auth) {
         //check ldap first
-        String authToken = ExternalAuthUtil.login(auth);
+        //String authToken = ExternalAuthUtil.login(auth);
+        String authToken = null;
 
-        //radius login
-        authToken = ExternalAuthUtil.radiusLogin(auth);
-
-        if (StringUtils.isEmpty(authToken)) {
+        if (!noRadiusUsers.contains(auth.getUsername()))
+            //radius login
+            authToken = ExternalAuthUtil.radiusLogin(auth);
+        else {
+            //if (StringUtils.isEmpty(authToken)) {
             Connection con = null;
             try {
                 con = DBUtils.getConn();
@@ -98,10 +106,10 @@ public class AuthDB {
 
             } catch (Exception e) {
                 log.error(e.toString(), e);
-            }
-            finally {
+            } finally {
                 DBUtils.closeConn(con);
             }
+            //}
         }
 
         return authToken;
@@ -140,8 +148,7 @@ public class AuthDB {
 
             } catch (Exception e) {
                 log.error(e.toString(), e);
-            }
-            finally {
+            } finally {
                 DBUtils.closeConn(con);
             }
         }
@@ -198,7 +205,7 @@ public class AuthDB {
             Calendar c = Calendar.getInstance();
             c.setTime(new Date());
             stmt.setTimestamp(1, new Timestamp(c.getTime().getTime()));
-            if(Auth.MANAGER.equals(auth.getUserType()) || EXPIRATION_DAYS <=0) {
+            if (Auth.MANAGER.equals(auth.getUserType()) || EXPIRATION_DAYS <= 0) {
                 stmt.setTimestamp(2, null);
             } else {
                 c.add(Calendar.DATE, EXPIRATION_DAYS);
@@ -228,8 +235,7 @@ public class AuthDB {
             updateLastLogin(con, auth);
         } catch (Exception e) {
             log.error(e.toString(), e);
-        }
-        finally {
+        } finally {
             DBUtils.closeConn(con);
         }
 
@@ -268,8 +274,7 @@ public class AuthDB {
 
         } catch (Exception e) {
             log.error(e.toString(), e);
-        }
-        finally {
+        } finally {
             DBUtils.closeConn(con);
         }
         return success;
@@ -292,8 +297,8 @@ public class AuthDB {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Long userId = rs.getLong("id");
-                
-                user=UserDB.getUser(con, userId);
+
+                user = UserDB.getUser(con, userId);
             }
             DBUtils.closeRs(rs);
             DBUtils.closeStmt(stmt);
@@ -322,8 +327,7 @@ public class AuthDB {
             user = getUserByAuthToken(con, authToken);
         } catch (Exception e) {
             log.error(e.toString(), e);
-        }
-        finally {
+        } finally {
             DBUtils.closeConn(con);
         }
 
@@ -354,8 +358,7 @@ public class AuthDB {
 
         } catch (Exception e) {
             log.error(e.toString(), e);
-        }
-        finally {
+        } finally {
             DBUtils.closeConn(con);
         }
 
@@ -469,8 +472,7 @@ public class AuthDB {
                 user.setExpirationTm(rs.getTimestamp("expiration_tm"));
                 if (EXPIRATION_DAYS > 0 && user.getExpirationTm() != null && user.getExpirationTm().before(new Date())) {
                     user.setExpired(true);
-                }
-                else {
+                } else {
                     user.setExpired(false);
                 }
                 user.setProfileList(UserProfileDB.getProfilesByUser(con, user.getId()));
