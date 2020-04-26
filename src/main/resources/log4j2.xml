@@ -20,12 +20,12 @@
                 protocol="UDP" appName="bastillion" mdcId="mdc" includeMDC="true"
                 facility="SYSLOG" newLine="true"
                 messageId="Audit" id="bastillion"/>
-       
+
     </Appenders>
 
 
     <Loggers>
-        
+
        <!-- <Logger name="io.bastillion.manage.util.SystemAudit" level="info" additivity="false">
             <AppenderRef ref="audit-appender"/>
         </Logger>
