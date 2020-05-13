@@ -34,4 +34,8 @@
         <location>/error.html</location>
     </error-page>
 
+    <session-config>
+        <session-timeout>120</session-timeout>
+    </session-config>
+
 </web-app>
