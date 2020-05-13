@@ -278,8 +278,8 @@
                 var ids = getActiveTermsInstanceIds();
                 for (var i = 0; i < ids.length; i++) {
                     var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-                    $("#output_" + ids[i]).width((w - 125)/2);
-                    $("#output_" + ids[i]).height(346 + y_offset);
+                    $("#output_" + ids[i]).width((w - 125));
+                    $("#output_" + ids[i]).height(400 + y_offset);
                     resize($("#output_" + ids[i]));
                 }
             }
