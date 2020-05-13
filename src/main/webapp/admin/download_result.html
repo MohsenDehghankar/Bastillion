@@ -45,7 +45,7 @@
         <tr>
 
             <th>Download Status</th>
-            <th>Result URL</th>
+            <th>Result</th>
         </tr>
         </thead>
         <tbody>
@@ -55,11 +55,23 @@
             <td>
                 <div class="warning" th:if="${#strings.equals(downloadDone,'wait')}">downloading ..</div>
                 <div class="success" th:if="${#strings.equals(downloadDone, 'done')}">download done</div>
+                <div class="error" th:if="${#strings.equals(downloadDone,'error')}">error in downloading</div>
             </td>
-            <td th:text="${address}">
+            <td>
+            <form th:action="@{/downloadthis}" method="post" autocomplete="off">
+                <table>
+                    <input type="hidden" name="user" th:value="${session.username}"/>
+                    <input type="hidden" name="token" th:value="${authToken}"/>
+                    <input type="hidden" name="fileName" th:value="${address}"/>
+                    <input th:if="${!#strings.equals(downloadDone,'error')}" type="submit" value="download"/>
+                </table>
+            </form>
+            <!--<td th:text="${address}">-->
             </td>
 
         </tr>
+
+
 
         </tbody>
     </table>

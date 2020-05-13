@@ -404,9 +404,11 @@ public class SSHUtil {
             session.disconnect();
         } catch (JSchException | SftpException e) {
             log.error(e.toString(), e);
+            return "error";
 //            e.printStackTrace();
         }
-        return "/download/" + randomName;
+//        return "/download/" + randomName;
+        return randomName;
     }
 
 

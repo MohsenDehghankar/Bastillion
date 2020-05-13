@@ -92,6 +92,8 @@ public class UploadAndPushKtrl extends BaseKontroller {
     String downloadDone = "wait";
     @Model(name = "address")
     String address = "";
+    @Model(name = "authToken")
+    String authToken = "";
 
 
     public UploadAndPushKtrl(HttpServletRequest request, HttpServletResponse response) {
@@ -276,17 +278,24 @@ public class UploadAndPushKtrl extends BaseKontroller {
             String addr = getRequest().getRequestURL().toString();
             addr = (addr.substring(0, addr.indexOf("admin") - 1));
 //            System.out.println(getRequest().getRemoteHost());
-            address = addr + name;
+//            address = addr + name;
+            address = name;
+            String username = AuthUtil.getUsername(getRequest().getSession());
+            authToken = UserDB.getUserToken(username);
             downloadDone = "done";
-            // download logging
-            Long userId = AuthUtil.getUserId(getRequest().getSession());
-            Long sessionId = AuthUtil.getSessionId(getRequest().getSession());
-            User user = UserDB.getUser(userId);
-            SessionOutput sessionOutput = new SessionOutput(sessionId, hostSystem);
-            sessionOutput.setOutput(new StringBuilder("download from " + filepath + " to " + address));
-            Gson gson = new GsonBuilder().registerTypeAdapter(AuditWrapper.class, new SessionOutputSerializer()).create();
-            log.info(gson.toJson(new AuditWrapper(user, sessionOutput)));
-
+            if (name.equals("error")) {
+                downloadDone = "error";
+                address = "causes:\n1. Didn't enter full path of file.\n2. The input address was not for a file.\n3. Or something else.";
+            } else {
+                // download logging
+                Long userId = AuthUtil.getUserId(getRequest().getSession());
+                Long sessionId = AuthUtil.getSessionId(getRequest().getSession());
+                User user = UserDB.getUser(userId);
+                SessionOutput sessionOutput = new SessionOutput(sessionId, hostSystem);
+                sessionOutput.setOutput(new StringBuilder("download from " + filepath + " filename: " + address));
+                Gson gson = new GsonBuilder().registerTypeAdapter(AuditWrapper.class, new SessionOutputSerializer()).create();
+                log.info(gson.toJson(new AuditWrapper(user, sessionOutput)));
+            }
         }
         getRequest().getSession().setAttribute(SecurityFilter._CSRF,
                 getRequest().getParameter(SecurityFilter._CSRF));
