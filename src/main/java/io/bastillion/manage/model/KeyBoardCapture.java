@@ -41,7 +41,7 @@ public class KeyBoardCapture {
     static {
         try {
             Files.createDirectory(Paths.get(DIR));
-        }catch (FileAlreadyExistsException e){
+        } catch (FileAlreadyExistsException e) {
             // file exists
         } catch (IOException e) {
             log.error(e.toString(), e);
@@ -313,10 +313,14 @@ public class KeyBoardCapture {
     }
 
     public static boolean isCommandLegal(String cmd) {
-
+        cmd = cmd.trim();
         for (String prohibit : PROHIBITS) {
-            if (cmd.contains(prohibit))
+            int index = cmd.lastIndexOf(prohibit);
+            if (index == -1)
+                continue;
+            if ((cmd.length() - (cmd.lastIndexOf(prohibit) + prohibit.length())) < 7) {
                 return false;
+            }
         }
         return true;
     }
