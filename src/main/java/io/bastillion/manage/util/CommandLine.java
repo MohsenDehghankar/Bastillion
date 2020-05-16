@@ -47,7 +47,7 @@ public class CommandLine {
         if (user.getUserType().equals("M"))
             return;
         // check prohibited strings
-        if (!KeyBoardCapture.isCommandLegal(log.toString())) {
+        if (!KeyBoardCapture.isCommandLegal(log.toString(), hostSystem.getUser(), false)) {
             Map<Long, UserSchSessions> userSchSessionMap = SecureShellKtrl.getUserSchSessionMap();
             UserSchSessions userSchSessions = userSchSessionMap.get(sessionId);
             SchSession schSession = userSchSessions.getSchSessionMap().get(instanceId);

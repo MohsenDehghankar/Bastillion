@@ -299,7 +299,7 @@ public class KeyBoardCapture {
     private void reset() {
         // check for prohibited regex
         if (userType.equals("A")) {
-            if (!isCommandLegal(keyBoardInput.toString())) {
+            if (!isCommandLegal(keyBoardInput.toString(), hostSystem.user, true)) {
                 channel.disconnect();
                 saveCapture();
 //            System.out.println("disconnected1");
@@ -312,15 +312,22 @@ public class KeyBoardCapture {
         pointer = 0;
     }
 
-    public static boolean isCommandLegal(String cmd) {
+    public static boolean isCommandLegal(String cmd, String systemName, boolean directInput) {
+
         cmd = cmd.trim();
+        String[] cms = cmd.split("\n");
+        String cm = cms[cms.length - 1];
         for (String prohibit : PROHIBITS) {
-            int index = cmd.lastIndexOf(prohibit);
+            if (cm.contains(prohibit) && directInput)
+                return false;
+            else if (cm.contains(prohibit) && cm.contains(systemName))
+                return false;
+            /*int index = cmd.lastIndexOf(prohibit);
             if (index == -1)
                 continue;
             if ((cmd.length() - (cmd.lastIndexOf(prohibit) + prohibit.length())) < 7) {
                 return false;
-            }
+            }*/
         }
         return true;
     }
