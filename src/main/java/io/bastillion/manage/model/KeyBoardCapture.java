@@ -3,7 +3,9 @@ package io.bastillion.manage.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jcraft.jsch.Channel;
+import io.bastillion.manage.control.SecureShellKtrl;
 import io.bastillion.manage.db.UserDB;
+import io.bastillion.manage.socket.SecureShellWS;
 import io.bastillion.manage.util.DBUtils;
 import io.bastillion.manage.util.SessionOutputSerializer;
 import org.slf4j.Logger;
@@ -15,6 +17,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class KeyBoardCapture {
 
@@ -37,6 +40,7 @@ public class KeyBoardCapture {
     HostSystem hostSystem;
     Channel channel;
     String userType;
+    SecureShellWS webSocket;
 
     static {
         try {
@@ -299,10 +303,10 @@ public class KeyBoardCapture {
     private void reset() {
         // check for prohibited regex
         if (userType.equals("A")) {
+
             if (!isCommandLegal(keyBoardInput.toString(), hostSystem.user, true)) {
                 channel.disconnect();
                 saveCapture();
-//            System.out.println("disconnected1");
                 syslogger.error("invalid access to prohibited places" + " sessionId = " + sessionId +
                         " instanceId = " + instanceId);
             }
@@ -317,17 +321,16 @@ public class KeyBoardCapture {
         cmd = cmd.trim();
         String[] cms = cmd.split("\n");
         String cm = cms[cms.length - 1];
+        cm = cm.replace("\t", "");
         for (String prohibit : PROHIBITS) {
+            if (cm.trim().equals(prohibit))
+                return false;
+            if (cms.length == 1 && cm.contains(prohibit))
+                return false;
             if (cm.contains(prohibit) && directInput)
                 return false;
-            else if (cm.contains(prohibit) && cm.contains(systemName))
+            else if (cm.contains(prohibit.trim()) && cm.contains(systemName))
                 return false;
-            /*int index = cmd.lastIndexOf(prohibit);
-            if (index == -1)
-                continue;
-            if ((cmd.length() - (cmd.lastIndexOf(prohibit) + prohibit.length())) < 7) {
-                return false;
-            }*/
         }
         return true;
     }

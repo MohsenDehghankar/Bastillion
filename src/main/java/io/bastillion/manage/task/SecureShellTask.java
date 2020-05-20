@@ -101,17 +101,14 @@ public class SecureShellTask implements Runnable {
             char[] buff = new char[1024];
             int read;
             while ((read = br.read(buff)) != -1) {
-
-
-                appendCommand(buff, 0, read);
-
-                SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), buff, 0, read);
+                if (!appendCommand(buff, 0, read))
+                    SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), buff, 0, read);
                 Thread.sleep(50);
             }
 
             // the terminal closed
             // flush
-            appendCommand(new char[]{13}, 0,1);
+            appendCommand(new char[]{13}, 0, 1);
             removeThisInstance();
 
             SessionOutputUtil.removeOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId());
@@ -121,12 +118,12 @@ public class SecureShellTask implements Runnable {
         }
     }
 
-    private void appendCommand(char[] buffer, int offset, int count) {
+    private boolean appendCommand(char[] buffer, int offset, int count) {
         synchronized (SecureShellTask.class) {
             SessionInstances sessionInstances = allSessions.get(sessionOutput.getSessionId());
             Map<Integer, CommandLine> instancesCommandLine = sessionInstances.getInstancesCommandLine();
             CommandLine commandLine = instancesCommandLine.get(sessionOutput.getInstanceId());
-            commandLine.append(buffer, offset, count);
+            return commandLine.append(buffer, offset, count);
         }
     }
 
