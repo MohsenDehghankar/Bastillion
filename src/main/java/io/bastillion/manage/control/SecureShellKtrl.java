@@ -104,6 +104,10 @@ public class SecureShellKtrl extends BaseKontroller {
     @Kontrol(path = "/admin/createTerms", method = MethodType.POST)
     public String createTerms() {
 
+
+        getRequest().getSession().setAttribute("_csrf", getRequest().getParameter("_csrf"));
+
+
         Long userId = AuthUtil.getUserId(getRequest().getSession());
         Long sessionId = AuthUtil.getSessionId(getRequest().getSession());
         if (pendingSystemStatus != null && pendingSystemStatus.getId() != null) {
@@ -202,6 +206,7 @@ public class SecureShellKtrl extends BaseKontroller {
 
             AuthUtil.setSessionId(getRequest().getSession(), SessionAuditDB.createSessionLog(user));
         }
+
 
         return "/admin/secure_shell.html";
     }

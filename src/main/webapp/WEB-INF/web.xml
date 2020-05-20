@@ -3,6 +3,7 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
     <session-config>
+        <session-timeout>120</session-timeout>
         <cookie-config>
             <http-only>true</http-only>
         </cookie-config>
@@ -33,9 +34,5 @@
     <error-page>
         <location>/error.html</location>
     </error-page>
-
-    <session-config>
-        <session-timeout>120</session-timeout>
-    </session-config>
 
 </web-app>
