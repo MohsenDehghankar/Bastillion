@@ -73,7 +73,15 @@ public class LoginKtrl extends BaseKontroller {
     public String loginSubmit() {
         String retVal = "redirect:/admin/menu.html";
 
-        String authToken = AuthDB.login(auth);
+        String authToken = null;
+        try {
+            authToken = AuthDB.login(auth);
+        }catch (Exception e){
+            System.out.println("Problem in login");
+            e.printStackTrace();
+            addError("Problem in login");
+            return "/login.html";
+        }
 
         //get client IP
         String clientIP = AuthUtil.getClientIPAddress(getRequest());

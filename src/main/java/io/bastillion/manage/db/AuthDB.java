@@ -73,7 +73,6 @@ public class AuthDB {
         //check ldap first
         //String authToken = ExternalAuthUtil.login(auth);
         String authToken = null;
-
         if (!noRadiusUsers.contains(auth.getUsername()))
             //radius login
             authToken = ExternalAuthUtil.radiusLogin(auth);

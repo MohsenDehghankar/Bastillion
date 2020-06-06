@@ -67,12 +67,21 @@ public class UserSettingsKtrl extends BaseKontroller {
             entry("White on black", "#000000,#FFFFFF")
     ));
     @Model(name = "publicKey")
-    static String publicKey = PrivateKeyDB.getApplicationKey().getPublicKey();
+    static String publicKey;
+    static {
+        try {
+            publicKey = PrivateKeyDB.getApplicationKey().getPublicKey();
+        }catch (Exception e){
+            System.out.println("Exception in Getting Application Key from server.");
+            e.printStackTrace();
+        }
+    }
 
     @Model(name = "auth")
     Auth auth;
     @Model(name = "userSettings")
     UserSettings userSettings;
+
 
 
 

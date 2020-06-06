@@ -334,13 +334,16 @@ public class ExternalAuthUtil {
         try {
             rc = new RadiusClient(host, authPort, acctPort, sharedSecret);
         } catch (RadiusException rex) {
-            log.error(rex.getMessage(), rex);
+            log.error(rex.toString());
+            rex.printStackTrace();
             return null;
         } catch (InvalidParameterException ivpex) {
-            log.error(ivpex.getMessage(), ivpex);
+            log.error(ivpex.toString());
+            ivpex.printStackTrace();
             return null;
         } catch (Exception e) {
             log.error("unknown exception from RADIUS server");
+            e.printStackTrace();
             return null;
         }
         int response = basicAuthenticate(rc, auth.getUsername(), auth.getPassword());
@@ -407,6 +410,7 @@ public class ExternalAuthUtil {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            e.printStackTrace();
             return 5;
         }
     }
