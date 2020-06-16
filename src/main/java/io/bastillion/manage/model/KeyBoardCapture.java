@@ -3,6 +3,7 @@ package io.bastillion.manage.model;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jcraft.jsch.Channel;
+import io.bastillion.common.util.AppConfig;
 import io.bastillion.manage.control.SecureShellKtrl;
 import io.bastillion.manage.db.UserDB;
 import io.bastillion.manage.socket.SecureShellWS;
@@ -27,7 +28,12 @@ public class KeyBoardCapture {
     private static Logger log = LoggerFactory.getLogger(KeyBoardCapture.class);
 
     // prohibited strings
-    private static final String[] PROHIBITS = new String[]{"authorized_ke", "ssh_con", "sshd_con", "passwd"};
+    private static String[] PROHIBITS;
+
+    static {
+        PROHIBITS = AppConfig.getProperty("prohibits").split(";");
+    }
+
 
     String filePath;
     StringBuilder keyBoardInput;
@@ -316,21 +322,41 @@ public class KeyBoardCapture {
         pointer = 0;
     }
 
+
+    static int counter = 0;
+
     public static boolean isCommandLegal(String cmd, String systemName, boolean directInput) {
 
         cmd = cmd.trim();
-        String[] cms = cmd.split("\n");
+        String[] cms = cmd.split("(\n|\r)");
         String cm = cms[cms.length - 1];
         cm = cm.replace("\t", "");
+        cm = cm.replace(String.valueOf((char) 7), "");
+        cmd = cmd.replace(String.valueOf((char) 7), "");
+
+        /*for (char c : cm.toCharArray()) {
+            System.out.print(Integer.valueOf(c) + " ");
+        }*/
+
         for (String prohibit : PROHIBITS) {
-            if (cm.trim().equals(prohibit))
-                return false;
-            if (cms.length == 1 && cm.contains(prohibit))
-                return false;
-            if (cm.contains(prohibit) && directInput)
-                return false;
-            else if (cm.contains(prohibit.trim()) && cm.contains(systemName))
-                return false;
+            if (cmd.contains(prohibit)) {
+//                System.out.println("[All Input Contains]" + counter++);
+                if (cms.length == 1) {
+//                    System.out.println("[Disconnect1]" + counter++);
+                    return false;
+                } else {
+                    if (cm.contains(prohibit)) {
+//                        System.out.println("[Disconnect2]" + counter++);
+//                        System.out.println(cm);
+                        return false;
+                    }
+                    if (cms[cms.length - 2].contains(prohibit)) {
+//                        System.out.println("[Disconnect3]" + counter++);
+//                        System.out.println(cms[cms.length - 2]);
+                        return false;
+                    }
+                }
+            }
         }
         return true;
     }

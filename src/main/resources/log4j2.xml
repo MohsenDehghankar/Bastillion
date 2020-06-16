@@ -2,10 +2,9 @@
 <Configuration>
 
     <Appenders>
-     <!--   <Console name="console" target="SYSTEM_OUT">
+       <!-- <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %-5p %c{1} - %m%n"/>
-        </Console>
-       -->
+        </Console>-->
         <!--<File name="audit-appender" fileName="/var/log/bastillion-audit.log" append="true">
             <PatternLayout pattern="%d %-5p %c{1} - %m%n"/>
         </File>
@@ -32,12 +31,12 @@
         <Logger name="io.bastillion.manage.control.LoginAudit" level="info" additivity="false">
             <AppenderRef ref="login-appender"/>
         </Logger>-->
-        <Logger name="login-sysLogger" level="info" additivity="false">
+        <!--<Logger name="login-sysLogger" level="info" additivity="false">
             <AppenderRef ref="login-RFC5424"/>
         </Logger>
         <Logger name="audit-sysLogger" level="info" additivity="false">
             <AppenderRef ref="audit-RFC5424"/>
-        </Logger>
+        </Logger>-->
         <!--<Logger name="io.bastillion.manage.control.LoginAudit" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
