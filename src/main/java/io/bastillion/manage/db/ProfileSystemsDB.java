@@ -99,7 +99,7 @@ public class ProfileSystemsDB {
 
 
 		try {
-			PreparedStatement stmt = con.prepareStatement("select * from  system s, system_map m where s.id=m.system_id and m.profile_id=? order by display_nm asc");
+			PreparedStatement stmt = con.prepareStatement("select * from  `system` s, system_map m where s.id=m.system_id and m.profile_id=? order by display_nm asc");
 			stmt.setLong(1, profileId);
 			ResultSet rs = stmt.executeQuery();
 
@@ -162,7 +162,7 @@ public class ProfileSystemsDB {
 
 
 		try {
-			PreparedStatement stmt = con.prepareStatement("select * from  system s, system_map m where s.id=m.system_id and m.profile_id=? order by display_nm asc");
+			PreparedStatement stmt = con.prepareStatement("select * from  `system` s, system_map m where s.id=m.system_id and m.profile_id=? order by display_nm asc");
 			stmt.setLong(1, profileId);
 			ResultSet rs = stmt.executeQuery();
 

@@ -136,7 +136,7 @@ public class SystemDB {
 		if (sortedSet.getOrderByField() != null && !sortedSet.getOrderByField().trim().equals("")) {
 			orderBy = "order by " + sortedSet.getOrderByField() + " " + sortedSet.getOrderByDirection();
 		}
-		String sql = "select s.*, m.profile_id from  system s left join system_map  m on m.system_id = s.id and m.profile_id = ? " + orderBy;
+		String sql = "select s.*, m.profile_id from  `system` s left join system_map  m on m.system_id = s.id and m.profile_id = ? " + orderBy;
 
 		Connection con = null;
 		try {
@@ -188,7 +188,7 @@ public class SystemDB {
 		if (sortedSet.getOrderByField() != null && !sortedSet.getOrderByField().trim().equals("")) {
 			orderBy = "order by " + sortedSet.getOrderByField() + " " + sortedSet.getOrderByDirection();
 		}
-		String sql = "select * from  system s ";
+		String sql = "select * from  `system` s ";
 		//if profile id exists add to statement
 		sql += StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_PROFILE_ID)) ? ",system_map m where s.id=m.system_id and m.profile_id=? " : "";
 		sql += orderBy;
@@ -272,7 +272,7 @@ public class SystemDB {
 
 		try {
 
-			PreparedStatement stmt = con.prepareStatement("select * from  system where id=?");
+			PreparedStatement stmt = con.prepareStatement("select * from  `system` where id=?");
 			stmt.setLong(1, id);
 			ResultSet rs = stmt.executeQuery();
 
@@ -312,7 +312,7 @@ public class SystemDB {
 		Long userId = null;
 		try {
 			con = DBUtils.getConn();
-			PreparedStatement stmt = con.prepareStatement("insert into system (display_nm, user, host, port, authorized_keys, status_cd) values (?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
+			PreparedStatement stmt = con.prepareStatement("insert into `system` (display_nm, user, host, port, authorized_keys, status_cd) values (?,?,?,?,?,?)", PreparedStatement.RETURN_GENERATED_KEYS);
 			stmt.setString(1, hostSystem.getDisplayNm());
 			stmt.setString(2, hostSystem.getUser());
 			stmt.setString(3, hostSystem.getHost());
@@ -349,7 +349,7 @@ public class SystemDB {
 		try {
 			con = DBUtils.getConn();
 
-			PreparedStatement stmt = con.prepareStatement("update system set display_nm=?, user=?, host=?, port=?, authorized_keys=?, status_cd=?  where id=?");
+			PreparedStatement stmt = con.prepareStatement("update `system` set display_nm=?, user=?, host=?, port=?, authorized_keys=?, status_cd=?  where id=?");
 			stmt.setString(1, hostSystem.getDisplayNm());
 			stmt.setString(2, hostSystem.getUser());
 			stmt.setString(3, hostSystem.getHost());
@@ -381,7 +381,7 @@ public class SystemDB {
 		try {
 			con = DBUtils.getConn();
 
-			PreparedStatement stmt = con.prepareStatement("delete from system where id=?");
+			PreparedStatement stmt = con.prepareStatement("delete from `system` where id=?");
 			stmt.setLong(1, hostSystemId);
 			stmt.execute();
 			DBUtils.closeStmt(stmt);
@@ -439,7 +439,7 @@ public class SystemDB {
 
 		try {
 			con=DBUtils.getConn();
-			PreparedStatement stmt = con.prepareStatement("select * from system");
+			PreparedStatement stmt = con.prepareStatement("select * from `system`");
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
@@ -479,7 +479,7 @@ public class SystemDB {
 
 
 		try {
-			PreparedStatement stmt = con.prepareStatement("select * from system");
+			PreparedStatement stmt = con.prepareStatement("select * from `system`");
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
@@ -510,7 +510,7 @@ public class SystemDB {
 
 
 		try {
-			PreparedStatement stmt = con.prepareStatement("select distinct system_id from system_map m, user_map um, system s where m.profile_id=um.profile_id and um.user_id=?");
+			PreparedStatement stmt = con.prepareStatement("select distinct system_id from system_map m, user_map um, `system` s where m.profile_id=um.profile_id and um.user_id=?");
 			stmt.setLong(1, userId);
 			ResultSet rs = stmt.executeQuery();
 
