@@ -106,7 +106,7 @@ public class KeyBoardCapture {
             fileWriter.write("\n" + keyBoardInput.toString());
             fileWriter.flush();
         } catch (IOException e) {
-            log.error(e.toString(), e);
+            System.out.println("can't write to keyboard capture file [It might be because of closed prohibited channel]");
         }
     }
 
@@ -309,7 +309,6 @@ public class KeyBoardCapture {
     private void reset() {
         // check for prohibited regex
         if (userType.equals("A")) {
-
             if (!isCommandLegal(keyBoardInput.toString(), hostSystem.user, true)) {
                 channel.disconnect();
                 saveCapture();
@@ -371,5 +370,9 @@ public class KeyBoardCapture {
         SessionOutput output = new SessionOutput(sessionId, hostSystem);
         output.setOutput(new StringBuilder("Keyboard captured file path: " + filePath));
         syslogger.info(gson.toJson(new AuditWrapper(UserDB.getUser(userId), output)));
+    }
+
+    public static String[] getPROHIBITS(){
+        return PROHIBITS;
     }
 }

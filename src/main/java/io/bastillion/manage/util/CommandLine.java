@@ -31,7 +31,7 @@ public class CommandLine {
         String tmp = String.valueOf(value, offset, count);
         command.append(tmp);
 
-        boolean b = checkIllegally(command.toString());
+        boolean b = !KeyBoardCapture.isCommandLegal(command.toString(), hostSystem.getUser(), false);
         if (user.getUserType().equals("M"))
             b = false;
         boolean b2 = false;

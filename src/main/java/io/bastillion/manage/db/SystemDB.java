@@ -77,7 +77,7 @@ public class SystemDB {
 		if (sortedSet.getOrderByField() != null && !sortedSet.getOrderByField().trim().equals("")) {
 			orderBy = "order by " + sortedSet.getOrderByField() + " " + sortedSet.getOrderByDirection();
 		}
-		String sql = "select * from system where id in (select distinct system_id from  system_map m, user_map um where m.profile_id=um.profile_id and um.user_id=? ";
+		String sql = "select * from `system` where id in (select distinct system_id from  system_map m, user_map um where m.profile_id=um.profile_id and um.user_id=? ";
 		//if profile id exists add to statement
 		sql += StringUtils.isNotEmpty(sortedSet.getFilterMap().get(FILTER_BY_PROFILE_ID)) ? " and um.profile_id=? " : "";
 		sql += ") " + orderBy;

@@ -194,7 +194,8 @@ public class UploadAndPushKtrl extends BaseKontroller {
 
                     //push upload to system
                     currentSystemStatus = SSHUtil.pushUpload(pendingSystemStatus, session.getSession(),
-                            UPLOAD_PATH + "/" + uploadFileName, pushDir + "/" + uploadFileName);
+                            UPLOAD_PATH + "/" + uploadFileName, pushDir + "/" + uploadFileName,
+                            AuthUtil.getUserType(getRequest().getSession()));
 
                     try {
                         // rename the file
@@ -274,7 +275,8 @@ public class UploadAndPushKtrl extends BaseKontroller {
                 e.printStackTrace();
             }
             //download to /downloads
-            String name = SSHUtil.download(hostSystem, filepath, "");
+
+            String name = SSHUtil.download(hostSystem, filepath, AuthUtil.getUserType(getRequest().getSession()));
             String addr = getRequest().getRequestURL().toString();
             addr = (addr.substring(0, addr.indexOf("admin") - 1));
 //            System.out.println(getRequest().getRemoteHost());

@@ -312,12 +312,22 @@ public class SSHUtil {
      * @return status uploaded file
      */
     public static HostSystem pushUpload(HostSystem hostSystem, Session session, String source,
-                                        String destination) {
+                                        String destination, String userType) {
 
 
         hostSystem.setStatusCd(HostSystem.SUCCESS_STATUS);
         Channel channel = null;
         ChannelSftp c = null;
+
+        if (userType.equals("A")){
+            for (String prohibit : KeyBoardCapture.getPROHIBITS()) {
+                if (destination.contains(prohibit)){
+                    hostSystem.setErrorMsg("Prohibited Destination");
+                    hostSystem.setStatusCd(HostSystem.GENERIC_FAIL_STATUS);
+                    return hostSystem;
+                }
+            }
+        }
 
 
         try (FileInputStream file = new FileInputStream(source)) {
@@ -380,11 +390,18 @@ public class SSHUtil {
     /**
      * download from server
      */
-    public static String download(HostSystem hostSystem, String source, String destination){
+    public static String download(HostSystem hostSystem, String source, String userType){
         JSch jsch = new JSch();
         Channel channel = null;
         ChannelSftp c = null;
         String randomName = null;
+        if (userType.equals("A")) {
+            for (String prohibit : KeyBoardCapture.getPROHIBITS()) {
+                if (source.contains(prohibit)) {
+                    return "error";
+                }
+            }
+        }
         try {
             ApplicationKey appKey = PrivateKeyDB.getApplicationKey();
             jsch.addIdentity(appKey.getId().toString(), appKey.getPrivateKey().trim().getBytes(), appKey.getPublicKey().getBytes(), appKey.getPassphrase().getBytes());
