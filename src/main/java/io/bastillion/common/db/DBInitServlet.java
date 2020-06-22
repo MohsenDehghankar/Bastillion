@@ -36,6 +36,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.sql.*;
 import java.util.Scanner;
@@ -167,33 +168,37 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
 
 
                 // add public keys from file
-                String path = AppConfig.getProperty("publicKeyPath");
-                FileInputStream inputStream = new FileInputStream(path);
-                Scanner scanner = new Scanner(inputStream);
-                String public_key;
-                int count = 1;
-                while (scanner.hasNext()) {
-                    public_key = scanner.nextLine();
-                    pStmt = connection.prepareStatement("insert into public_keys(key_nm, type, fingerprint, public_key, user_id, profile_id, enabled) values (?,?,?,?,?,?,?)");
-                    // name
-                    pStmt.setString(1, "predefined key " + count++);
-                    // type
-                    pStmt.setString(2, SSHUtil.getKeyType(public_key));
-                    // finger-print
-                    pStmt.setString(3, SSHUtil.getFingerprint(public_key));
-                    // public key
-                    pStmt.setString(4, public_key);
-                    // user id
-                    pStmt.setString(5, "1");
-                    // profile id (null == all systems)
-                    pStmt.setString(6, null);
-                    // enabled
-                    //pStmt.setString(7, "false");
-                    pStmt.setBoolean(7, false);
-                    pStmt.execute();
-                    DBUtils.closeStmt(pStmt);
+                try {
+                    String path = AppConfig.getProperty("publicKeyPath");
+                    FileInputStream inputStream = new FileInputStream(path);
+                    Scanner scanner = new Scanner(inputStream);
+                    String public_key;
+                    int count = 1;
+                    while (scanner.hasNext()) {
+                        public_key = scanner.nextLine();
+                        pStmt = connection.prepareStatement("insert into public_keys(key_nm, type, fingerprint, public_key, user_id, profile_id, enabled) values (?,?,?,?,?,?,?)");
+                        // name
+                        pStmt.setString(1, "predefined key " + count++);
+                        // type
+                        pStmt.setString(2, SSHUtil.getKeyType(public_key));
+                        // finger-print
+                        pStmt.setString(3, SSHUtil.getFingerprint(public_key));
+                        // public key
+                        pStmt.setString(4, public_key);
+                        // user id
+                        pStmt.setString(5, "1");
+                        // profile id (null == all systems)
+                        pStmt.setString(6, null);
+                        // enabled
+                        //pStmt.setString(7, "false");
+                        pStmt.setBoolean(7, false);
+                        pStmt.execute();
+                        DBUtils.closeStmt(pStmt);
+                    }
+                    inputStream.close();
+                }catch (FileNotFoundException e){
+                    System.out.println("No File Selected for predefined public_keys");
                 }
-                inputStream.close();
 
             }
             DBUtils.closeRs(rs);
