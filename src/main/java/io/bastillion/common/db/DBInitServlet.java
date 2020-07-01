@@ -28,6 +28,7 @@
 package io.bastillion.common.db;
 
 import io.bastillion.common.util.AppConfig;
+import io.bastillion.manage.db.UserLoginDB;
 import io.bastillion.manage.model.Auth;
 import io.bastillion.manage.util.*;
 
@@ -257,6 +258,8 @@ public class DBInitServlet extends javax.servlet.http.HttpServlet {
             //delete ssh keys
             SSHUtil.deletePvtGenSSHKey();
 
+            //users_login table (saves local/radius login)
+            UserLoginDB.createTable(connection);
 
         } catch (Exception ex) {
             log.error(ex.toString(), ex);

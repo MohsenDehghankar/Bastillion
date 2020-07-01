@@ -120,7 +120,7 @@
                 for (var i = 0; i < ids.length; i++) {
                     var id = ids[i];
                     $.ajax({
-                        url: '../admin/disconnectTerm.ktrl?id=' + id + '&_csrf=' + [[${session._csrf}]],
+                        url: '../admin/disconnectTerm.ktrl?session_id='+ [[${session_id}]] +'&id=' + id + '&_csrf=' + [[${session._csrf}]],
                         cache: false
                     });
                     $('#run_cmd_' + id).remove();
@@ -153,7 +153,7 @@
                     idListStr = idListStr + '&idList=' + entry;
                 });
 
-                $("#upload_push_frame").attr("src", "setUpload.ktrl" + idListStr);
+                $("#upload_push_frame").attr("src", "setUpload.ktrl" + idListStr + "&ses=" + [[${session_id}]]);
                 $("#upload_push_dialog").modal();
             });
 
@@ -479,7 +479,7 @@
                 setTerminalEvents($("#run_cmd_" + newInstanceId));
 
                 //call server to create instances - returned the new cloned instance id
-                $.getJSON('../admin/createSession.ktrl?systemSelectId=' + hostId + '&_csrf=' + [[${session._csrf}]]);
+                $.getJSON('../admin/createSession.ktrl?session_id=' + [[${session_id}]] + '&systemSelectId=' + hostId + '&_csrf=' + [[${session._csrf}]]);
 
 
             });
@@ -572,7 +572,7 @@
                             </ul>
                         </li>
                         <li><a type="hidden" id="go_top_link" href="#" onclick="scrollTo(0,0)">Go To Top</a> </li>
-                        <li><a th:href="'exitTerms.ktrl?_csrf=' + ${session._csrf}">Exit Terminals</a></li>
+                        <li><a th:href="'exitTerms.ktrl?_csrf=' + ${session._csrf}" onclick="window.close()">Exit Terminals</a></li>
                     </ul>
 
 
@@ -627,6 +627,9 @@
                     </select>
 
                 </div>
+
+                <div class="row" th:text="${session_id}" hidden="hidden"></div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

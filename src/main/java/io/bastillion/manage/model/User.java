@@ -39,6 +39,7 @@ public class User extends Auth {
     String ipAddress;
     Boolean checked=false;
     List<Profile> profileList;
+    public Boolean localLogin = false;
 
     public Boolean getChecked() {
         return checked;

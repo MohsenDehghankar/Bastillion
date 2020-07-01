@@ -94,6 +94,8 @@ public class UploadAndPushKtrl extends BaseKontroller {
     String address = "";
     @Model(name = "authToken")
     String authToken = "";
+    @Model(name = "ses")
+    Long ses = 0L;
 
 
     public UploadAndPushKtrl(HttpServletRequest request, HttpServletResponse response) {
@@ -155,6 +157,7 @@ public class UploadAndPushKtrl extends BaseKontroller {
 
             String username = AuthUtil.getUsername(getRequest().getSession());
             Long sessionId = AuthUtil.getSessionId(getRequest().getSession());
+            sessionId = ses;
             for (HostSystem hostSystem : hostSystemList) {
                 log.info("User:" + username + " SessionId:" + sessionId + " host:" + hostSystem.getHost() + " uploaded to:" + pushDir + "/" + uploadFileName);
             }
@@ -175,6 +178,8 @@ public class UploadAndPushKtrl extends BaseKontroller {
 
         Long userId = AuthUtil.getUserId(getRequest().getSession());
         Long sessionId = AuthUtil.getSessionId(getRequest().getSession());
+        sessionId = ses;
+
         try {
 
             //get next pending system

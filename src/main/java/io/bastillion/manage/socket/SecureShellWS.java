@@ -80,11 +80,13 @@ public class SecureShellWS {
 
                 //get servletRequest.getSession() for user
                 UserSchSessions userSchSessions = SecureShellKtrl.getUserSchSessionMap().get(sessionId);
+
                 if (userSchSessions != null) {
                     SchSession schSession = userSchSessions.getSchSessionMap().get(id);
                     if (keyCode != null) {
                         if (keyMap.containsKey(keyCode)) {
                             try {
+
                                 schSession.getCommander().write(keyMap.get(keyCode));
 
                                 schSession.getKeyBoardCapture().append(keyCode);
@@ -118,8 +120,9 @@ public class SecureShellWS {
     @OnClose
     public void onClose() {
 
+
         if (SecureShellKtrl.getUserSchSessionMap() != null) {
-            UserSchSessions userSchSessions = SecureShellKtrl.getUserSchSessionMap().get(sessionId);
+            UserSchSessions userSchSessions = SecureShellKtrl.getUserSchSessionMap().get(this.sessionId);
             if (userSchSessions != null) {
                 Map<Integer, SchSession> schSessionMap = userSchSessions.getSchSessionMap();
 
@@ -147,8 +150,8 @@ public class SecureShellWS {
 
                 //clear and remove session map for user
                 schSessionMap.clear();
-                SecureShellKtrl.getUserSchSessionMap().remove(sessionId);
-                SessionOutputUtil.removeUserSession(sessionId);
+                SecureShellKtrl.getUserSchSessionMap().remove(this.sessionId);
+                SessionOutputUtil.removeUserSession(this.sessionId);
             }
         }
 

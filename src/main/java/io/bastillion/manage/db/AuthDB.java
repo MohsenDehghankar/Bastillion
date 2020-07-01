@@ -73,15 +73,20 @@ public class AuthDB {
         //check ldap first
         //String authToken = ExternalAuthUtil.login(auth);
         String authToken = null;
-        if (!noRadiusUsers.contains(auth.getUsername()))
+        //if (!noRadiusUsers.contains(auth.getUsername()))
+        Connection con = DBUtils.getConn();
+        if (!UserLoginDB.getType(auth.getUsername(), con))
             //radius login
-            authToken = ExternalAuthUtil.radiusLogin(auth);
+            try {
+                authToken = ExternalAuthUtil.radiusLogin(auth);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                DBUtils.closeConn(con);
+            }
         else {
             //if (StringUtils.isEmpty(authToken)) {
-            Connection con = null;
             try {
-                con = DBUtils.getConn();
-
                 //get salt for user
                 String salt = getSaltByUsername(con, auth.getUsername());
                 //login
@@ -484,5 +489,9 @@ public class AuthDB {
         }
 
         return user;
+    }
+
+    public static List<String> getNoRadiusUsers() {
+        return noRadiusUsers;
     }
 }

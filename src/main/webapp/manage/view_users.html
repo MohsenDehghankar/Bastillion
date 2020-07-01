@@ -266,7 +266,8 @@
                                         <span class="error" th:text="${fieldErrors.get('user.passwordConfirm')}"></span>
                                         <input type="hidden" name="resetSharedSecret" th:value="${resetSharedSecret}"/>
                                         <input type="hidden" name="sortedSet.orderByDirection"/>
-                                        <input type="hidden" name="sortedSet.orderByField"/></td>
+                                        <input type="hidden" name="sortedSet.orderByField"/>
+                                    </td>
                                 </tr>
                             </table>
                         </form>
@@ -319,6 +320,16 @@
 
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td><strong>Authentication</strong></td>
+                                        <td>
+                                            <div th:text="${u.localLogin}?Local:Radius"></div>
+                                        <td><strong>Change Auth (Local/Radius)</strong></td>
+                                        <td><input type="checkbox" name="changeAuth" value="true"/></td>
+                                        </td>
+                                        </td>
+                                    </tr>
+
                                     <tr th:if="${@io.bastillion.manage.util.ExternalAuthUtil@externalAuthEnabled}">
                                         <td><strong>Authentication Type</strong></td>
                                         <td>

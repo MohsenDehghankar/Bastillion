@@ -106,7 +106,9 @@ public class UserDB {
                     user.setExpired(false);
                 }
                 userList.add(user);
-
+                if (UserLoginDB.getType(user.getUsername(), con)) {
+                    user.localLogin = true;
+                }
             }
             DBUtils.closeRs(rs);
             DBUtils.closeStmt(stmt);
@@ -291,6 +293,8 @@ public class UserDB {
 
         Long userId = null;
 
+        UserLoginDB.addUser(con, user.getUsername());
+
         try {
             PreparedStatement stmt = con.prepareStatement("insert into users (first_nm, last_nm, email, username, auth_type, user_type, password, salt, expiration_tm) values (?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, user.getFirstNm());
@@ -338,10 +342,12 @@ public class UserDB {
      */
     public static void updateUserNoCredentials(User user) {
 
-
         Connection con = null;
         try {
             con = DBUtils.getConn();
+
+            UserLoginDB.addUser(con, user.getUsername());
+
             PreparedStatement stmt = con.prepareStatement("update users set first_nm=?, last_nm=?, email=?, username=?, user_type=? where id=?");
             stmt.setString(1, user.getFirstNm());
             stmt.setString(2, user.getLastNm());
@@ -373,6 +379,9 @@ public class UserDB {
         Connection con = null;
         try {
             con = DBUtils.getConn();
+
+            UserLoginDB.addUser(con, user.getUsername());
+
             String salt = EncryptionUtil.generateSalt();
             PreparedStatement stmt = con.prepareStatement("update users set first_nm=?, last_nm=?, email=?, username=?, user_type=?, password=?, salt=? where id=?");
             stmt.setString(1, user.getFirstNm());
@@ -407,6 +416,9 @@ public class UserDB {
         Connection con = null;
         try {
             con = DBUtils.getConn();
+
+            UserLoginDB.deleteUser(con, getUser(userId).getUsername());
+
             PreparedStatement stmt = con.prepareStatement("delete from users where id=?");
             stmt.setLong(1, userId);
             stmt.execute();

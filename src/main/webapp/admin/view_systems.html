@@ -178,8 +178,8 @@
                     <td class="align_left">
                         <select th:name="'sortedSet.filterMap[' + ${@io.bastillion.manage.db.SystemDB@FILTER_BY_PROFILE_ID} + ']'"
                                 title="Profile" class="view_frm_select">
-                            <option value="">- Select Profile -</option>
-                            <option th:each="p : ${profileList}"
+                            <option onclick="document.getElementById('viewSystems').submit();" value="">- Select Profile -</option>
+                            <option onclick="document.getElementById('viewSystems').submit();" th:each="p : ${profileList}"
                                     th:value="${p.id}" th:text="${p.nm}"
                                     th:selected="${#strings.equals(sortedSet.filterMap.get(@io.bastillion.manage.db.SystemDB@FILTER_BY_PROFILE_ID), p.id)}"></option>
                         </select>
