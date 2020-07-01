@@ -246,6 +246,9 @@ public class SecureShellKtrl extends BaseKontroller {
                         schSession.setInputToChannel(null);
                         schSession.setCommander(null);
                         schSession.setOutFromChannel(null);
+
+                        schSession.getKeyBoardCapture().saveCapture();
+                        schSession.setKeyBoardCapture(null);
                     }
                     //remove from map
                     userSchSessions.getSchSessionMap().remove(id);
