@@ -55,11 +55,14 @@
 <template th:if="${idList!= null && !idList.empty}" th:remove="tag">
 
     <div th:replace="_res/inc/errors"></div>
-    <form id="upload" th:action="@{/admin/uploadSubmit.ktrl} + '?_csrf=' + ${session._csrf}" method="post" enctype="multipart/form-data">
+    <form id="upload" th:action="@{/admin/uploadSubmit.ktrl} + '?_csrf=' + ${session._csrf} + '&ses=' + ${ses}" method="post" enctype="multipart/form-data">
         <table>
             <tr>
                 <td>
                     <strong>File:</strong>
+                </td>
+                <td hidden="hidden">
+                    <div th:text="${ses}" hidden="hidden"></div>
                 </td>
                 <td>
                     <input name="upload" type="file" required="required" title="File"/>
