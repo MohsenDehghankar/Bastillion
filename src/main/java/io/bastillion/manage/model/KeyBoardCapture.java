@@ -102,12 +102,17 @@ public class KeyBoardCapture {
         }
         keyBoardInput = new StringBuilder(pre + s + past);
         pointer += 1;
-        try {
-            fileWriter.write("\n" + keyBoardInput.toString());
-            fileWriter.flush();
-        } catch (IOException e) {
-            System.out.println("can't write to keyboard capture file [It might be because of closed prohibited channel]");
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    fileWriter.write("\n" + keyBoardInput.toString());
+                    fileWriter.flush();
+                } catch (IOException e) {
+                    System.out.println("can't write to keyboard capture file [It might be because of closed prohibited channel]");
+                }
+            }
+        }).start();
     }
 
     public void append(int keyCode) {
@@ -372,7 +377,7 @@ public class KeyBoardCapture {
         syslogger.info(gson.toJson(new AuditWrapper(UserDB.getUser(userId), output)));
     }
 
-    public static String[] getPROHIBITS(){
+    public static String[] getPROHIBITS() {
         return PROHIBITS;
     }
 }

@@ -39,6 +39,7 @@ import io.bastillion.manage.model.SessionOutput;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -101,14 +102,16 @@ public class SecureShellTask implements Runnable {
             char[] buff = new char[1024];
             int read;
             while ((read = br.read(buff)) != -1) {
-                if (!appendCommand(buff, 0, read))
+                if (!appendCommand(buff, 0, read)) {
                     SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), buff, 0, read);
+                }
                 Thread.sleep(50);
             }
 
             // the terminal closed
             // flush
-            appendCommand(new char[]{13}, 0, 1);
+            new Thread(() -> appendCommand(new char[]{13}, 0, 1)).start();
+
             removeThisInstance();
 
             SessionOutputUtil.removeOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId());

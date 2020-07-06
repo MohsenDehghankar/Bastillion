@@ -52,6 +52,9 @@ public class DSPool {
     private DSPool() {
     }
 
+    public static BasicDataSource getDsPool() {
+        return dsPool;
+    }
 
     /**
      * fetches the data source for H2 db
@@ -102,6 +105,9 @@ public class DSPool {
         // mysql database
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName(DB_DRIVER);
+        dataSource.setMaxTotal(-1);
+        //dataSource.setMinIdle(MIN_IDLE);
+        //dataSource.setMaxWaitMillis(MAX_WAIT);
         dataSource.setUrl(connectionURL);
         dataSource.setUsername(user);
         dataSource.setPassword(password);
