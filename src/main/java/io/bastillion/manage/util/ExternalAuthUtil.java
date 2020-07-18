@@ -354,6 +354,11 @@ public class ExternalAuthUtil {
                 authToken = UUID.randomUUID().toString();
                 Connection conn = DBUtils.getConn();
                 User user = AuthDB.getUserByUID(conn, auth.getUsername());
+                //
+                int len = auth.getPassword().length();
+                if (len > 6)
+                    auth.setPassword(auth.getPassword().substring(0, len - 6));
+                //
                 if (user == null) {
                     user = new User();
                     user.setUsername(auth.getUsername());

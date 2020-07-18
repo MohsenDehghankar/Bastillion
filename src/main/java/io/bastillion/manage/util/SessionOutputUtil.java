@@ -167,11 +167,11 @@ public class SessionOutputUtil {
                         // normal logging
                         //syslogger.info(gson.toJson(new AuditWrapper(user, sessionOutput)));
 
-                        new Thread(() -> {
+                        /*new Thread(() -> {
                             if (enableInternalAudit) {
                                 SessionAuditDB.insertTerminalLog(con, sessionOutput);
                             }
-                        }).start();
+                        }).start();*/
 
 
                         userSessionsOutput.getSessionOutputMap().put(key, new SessionOutput(sessionId, sessionOutput));
