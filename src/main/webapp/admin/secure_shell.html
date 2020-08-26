@@ -199,6 +199,7 @@
 
                 }
             });
+
             //function for command keys (ie ESC, CTRL, etc..)
             $(document).keydown(function (e) {
                 if (termFocus) {
@@ -210,6 +211,13 @@
                         connection.send(JSON.stringify({id: getActiveTermsInstanceIds(), keyCode: keyCode}));
                         return;
                     }
+
+
+
+
+
+
+
 
                     //27 - ESC
                     //37 - LEFT

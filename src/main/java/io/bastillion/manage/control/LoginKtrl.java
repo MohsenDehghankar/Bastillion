@@ -31,8 +31,10 @@ package io.bastillion.manage.control;
 import io.bastillion.common.util.AppConfig;
 import io.bastillion.common.util.AuthUtil;
 import io.bastillion.manage.db.AuthDB;
+import io.bastillion.manage.db.UserDB;
 import io.bastillion.manage.model.Auth;
 import io.bastillion.manage.model.User;
+import io.bastillion.manage.util.EncryptionUtil;
 import io.bastillion.manage.util.OTPUtil;
 import loophole.mvc.annotation.Kontrol;
 import loophole.mvc.annotation.MethodType;
@@ -43,15 +45,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class LoginKtrl extends BaseKontroller {
 
     //check if otp is enabled
     @Model(name = "otpEnabled")
     static final Boolean otpEnabled = ("required".equals(AppConfig.getProperty("oneTimePassword")) || "optional".equals(AppConfig.getProperty("oneTimePassword")));
-//    private static Logger loginAuditLogger = LoggerFactory.getLogger("io.bastillion.manage.control.LoginAudit");
+    //    private static Logger loginAuditLogger = LoggerFactory.getLogger("io.bastillion.manage.control.LoginAudit");
     private static Logger syslogger = LoggerFactory.getLogger("login-sysLogger");
     private final String AUTH_ERROR = "Authentication Failed : Login credentials are invalid";
     private final String AUTH_ERROR_NO_PROFILE = "Authentication Failed : There are no profiles assigned to this account";
@@ -66,7 +70,44 @@ public class LoginKtrl extends BaseKontroller {
 
     @Kontrol(path = "/login", method = MethodType.GET)
     public String login() {
-        return "/login.html";
+
+        String retVal = "redirect:/admin/menu.html";
+
+        String token = null;
+        Long user_id = -1L;
+        // Get cookies
+        for (Cookie cookie : getRequest().getCookies()) {
+            if (cookie.getName().equals("user")) {
+                token = EncryptionUtil.decrypt(cookie.getValue());
+            }
+            if (cookie.getName().equals("user_id")) {
+                user_id = Long.parseLong(cookie.getValue());
+            }
+        }
+        if (token == null || user_id == -1L) {
+            return "/login.html";
+        }
+
+        // Create auth based on cookies
+        auth = new Auth();
+        auth.setId(user_id);
+        User user = UserDB.getUser(user_id);
+        auth.setUsername(user.getUsername());
+        auth.setAuthToken(token);
+        auth.setUserType(user.getUserType());
+        //
+        // Update login
+        AuthUtil.setAuthToken(getRequest().getSession(), token);
+        AuthUtil.setUserId(getRequest().getSession(), user.getId());
+        AuthUtil.setAuthType(getRequest().getSession(), user.getAuthType());
+        AuthUtil.setTimeout(getRequest().getSession());
+        AuthUtil.setUsername(getRequest().getSession(), user.getUsername());
+
+        AuthDB.updateLastLogin(user);
+        //
+
+        return retVal;
+//        return "/login.html";
     }
 
     @Kontrol(path = "/loginSubmit", method = MethodType.POST)
@@ -76,7 +117,13 @@ public class LoginKtrl extends BaseKontroller {
         String authToken = null;
         try {
             authToken = AuthDB.login(auth);
-        }catch (Exception e){
+
+            // set cookie
+            Cookie ck = new Cookie("user", EncryptionUtil.encrypt(authToken));
+
+            getResponse().addCookie(ck);
+
+        } catch (Exception e) {
             System.out.println("Problem in login");
             e.printStackTrace();
             addError("Problem in login");
@@ -88,6 +135,12 @@ public class LoginKtrl extends BaseKontroller {
         if (authToken != null) {
 
             User user = AuthDB.getUserByAuthToken(authToken);
+
+            // cookie
+            Cookie ck2 = new Cookie("user_id", String.valueOf(user.getId()));
+            getResponse().addCookie(ck2);
+            //
+
             if (user != null) {
                 String sharedSecret = null;
                 if (otpEnabled) {
@@ -151,7 +204,19 @@ public class LoginKtrl extends BaseKontroller {
 
     @Kontrol(path = "/logout", method = MethodType.GET)
     public String logout() {
+
+        // Remove cookies
+        Cookie ck = new Cookie("user", "");
+        ck.setMaxAge(0);
+        getResponse().addCookie(ck);
+        Cookie ck2 = new Cookie("user_id", "");
+        ck2.setMaxAge(0);
+        getResponse().addCookie(ck2);
+        //
+
+
         AuthUtil.deleteAllSession(getRequest().getSession());
+
         return "redirect:/";
     }
 

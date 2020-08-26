@@ -46,41 +46,47 @@ import java.security.SecureRandom;
 @WebFilter(urlPatterns = {"/", "*" + DispatcherServlet.CTR_EXT, "*" + TemplateServlet.VIEW_EXT})
 public class CSRFFilter implements Filter {
 
-	private static Logger log = LoggerFactory.getLogger(CSRFFilter.class);
+    private static Logger log = LoggerFactory.getLogger(CSRFFilter.class);
 
-	// csrf parameter and session name
-	public static final String _CSRF = "_csrf";
-	private static final SecureRandom random = new SecureRandom();
+    // csrf parameter and session name
+    public static final String _CSRF = "_csrf";
+    private static final SecureRandom random = new SecureRandom();
 
 
-	public void init(FilterConfig filterConfig) {
-	}
+    public void init(FilterConfig filterConfig) {
+    }
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
-			throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
+//        System.out.println("------------csrf check----------------");
 
-		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
-		// csrf check
-		log.debug("CSRF parameter token is " + request.getParameter(_CSRF));
-		log.debug("CSRF sesson token is " + httpServletRequest.getSession().getAttribute(_CSRF));
-		String _csrf = (String) httpServletRequest.getSession().getAttribute(_CSRF);
-		if (_csrf == null || _csrf.equals(request.getParameter(_CSRF))) {
-			log.debug("CSRF token is valid for " + httpServletRequest.getRequestURL());
-			if (_csrf == null || httpServletRequest.getMethod().equalsIgnoreCase("POST")) {
-				_csrf = (new BigInteger(165, random)).toString(36).toUpperCase();
-				httpServletRequest.getSession().setAttribute(_CSRF, _csrf);
-			}
-			filterChain.doFilter(request, response);
-			return;
-		}
-		log.debug("CSRF token is invalid for " + httpServletRequest.getRequestURL());
-		httpServletRequest.getSession().invalidate();
-		log.debug("Session invalidated");
-		httpServletResponse.sendRedirect(httpServletRequest.getContextPath());
-	}
+        // csrf check
+//        System.out.println("CSRF parameter token is " + request.getParameter(_CSRF));
+//        System.out.println("CSRF session token is " + httpServletRequest.getSession().getAttribute(_CSRF));
+        boolean isLogin = httpServletRequest.getRequestURI().trim().equals("/");
+//        System.out.println("Boolean: " + httpServletRequest.getRequestURI().trim().equals("/"));
 
-	public void destroy() {
-	}
+        String _csrf = (String) httpServletRequest.getSession().getAttribute(_CSRF);
+
+        if (_csrf == null || _csrf.equals(request.getParameter(_CSRF)) || isLogin) {
+            log.debug("CSRF token is valid for " + httpServletRequest.getRequestURL());
+            if (_csrf == null || httpServletRequest.getMethod().equalsIgnoreCase("POST")) {
+                _csrf = (new BigInteger(165, random)).toString(36).toUpperCase();
+                httpServletRequest.getSession().setAttribute(_CSRF, _csrf);
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
+        System.out.println("Session " + httpServletRequest.getSession().getId() + " invalidated because of invalid CSRF.");
+        log.debug("CSRF token is invalid for " + httpServletRequest.getRequestURL());
+//        httpServletRequest.getSession().invalidate();
+        log.debug("Session invalidated");
+        httpServletResponse.sendRedirect("/csrf_error.html?_csrf=" + _csrf);
+    }
+
+    public void destroy() {
+    }
 }

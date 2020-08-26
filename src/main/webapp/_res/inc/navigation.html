@@ -96,7 +96,9 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a th:href="'../admin/userSettings.ktrl?_csrf=' + ${session._csrf}">Settings</a></li>
-                        <li><a href="../logout.ktrl">Logout</a></li>
+<!--                        <li><a th:href="'../logout.ktrl'">Logout</a></li>-->
+<!--                        <li><a th:href="'/logout.ktrl'">Logout2</a></li>-->
+                        <li><a th:href="'../logout.ktrl?_csrf=' + ${session._csrf}">Logout</a></li>
                     </ul>
                 </li>
             </ul>
