@@ -200,9 +200,17 @@
                 }
             });
 
+
             //function for command keys (ie ESC, CTRL, etc..)
             $(document).keydown(function (e) {
                 if (termFocus) {
+
+                    ids = getActiveTermsInstanceIds();
+                    var i;
+                    for (i=0; i<ids.length; i++){
+                        termMap[ids[i]].scrollToBottom();
+                    }
+
                     var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
                     keys[keyCode] = true;
 
@@ -211,8 +219,6 @@
                         connection.send(JSON.stringify({id: getActiveTermsInstanceIds(), keyCode: keyCode}));
                         return;
                     }
-
-
 
 
 
@@ -354,6 +360,7 @@
                     fontFamily: 'DejaVu Sans Mono, Liberation Mono, monospace',
                     scrollback: 9999999
                 });
+                // termMap[id].setOption('si', 'true');
                 // termMap[id].loadAddon(fitAddon);
 
                 var  CUSTOM_THEME =
