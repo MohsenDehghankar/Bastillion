@@ -221,7 +221,26 @@
                     }
 
 
+                    if (keys[16] && e.ctrlKey && keys[67]){
+                        // ctrl shift c
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
 
+                        for (i =0 ; i< ids.length; i++) {
+                            var term = termMap[ids[i]];
+                            if (term.hasSelection()) {
+                                var txt = term.getSelection();
+
+                                const el = document.createElement('textarea');
+                                el.value = txt;
+                                document.body.appendChild(el);
+                                el.select();
+                                document.execCommand('copy');
+                                document.body.removeChild(el);
+                            }
+                        }
+                        return;
+                    }
 
 
 
