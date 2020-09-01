@@ -108,7 +108,7 @@ public class SecureShellWS {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            schSession.getCommander().print("interrupted");
+                            schSession.getCommander().print("44interrupted");
                         } else {
                             schSession.getCommander().print(command);
                             schSession.getKeyBoardCapture().append(command);

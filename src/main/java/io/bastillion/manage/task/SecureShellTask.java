@@ -112,7 +112,7 @@ public class SecureShellTask implements Runnable {
 
                         StringBuilder a = new StringBuilder("");
                         a.append(buff, 0, read);
-                        if (a.toString().contains("interrupted")) {
+                        if (a.toString().contains("44interrupted")) {
                             SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), "\n \033[32m Interrupted [Press Enter] \033[0m");
                             break;
                         }
