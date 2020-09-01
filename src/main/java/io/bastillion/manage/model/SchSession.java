@@ -48,6 +48,19 @@ public class SchSession {
     OutputStream inputToChannel;
     HostSystem hostSystem;
     KeyBoardCapture keyBoardCapture;
+    boolean interrupt = false;
+
+    public synchronized void setInterrupt(boolean interrupt) {
+        synchronized (this) {
+            this.interrupt = interrupt;
+        }
+    }
+
+    public synchronized boolean getInterrupt(){
+        synchronized (this) {
+            return interrupt;
+        }
+    }
 
     public void setKeyBoardCapture(KeyBoardCapture keyBoardCapture) {
         this.keyBoardCapture = keyBoardCapture;

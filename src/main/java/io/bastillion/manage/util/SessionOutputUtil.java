@@ -128,6 +128,17 @@ public class SessionOutputUtil {
 
     }
 
+    public static void addToOutput(Long sessionId, Integer instanceId, String a) {
+
+//        System.out.println("cd:" + new StringBuilder("").append(value, offset, count));
+
+        UserSessionsOutput userSessionsOutput = userSessionsOutputMap.get(sessionId);
+        if (userSessionsOutput != null) {
+            userSessionsOutput.getSessionOutputMap().get(instanceId).getOutput().append(a);
+        }
+
+    }
+
 
     /**
      * returns list of output lines

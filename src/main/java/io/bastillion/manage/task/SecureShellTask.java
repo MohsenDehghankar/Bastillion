@@ -27,18 +27,15 @@
  */
 package io.bastillion.manage.task;
 
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelShell;
 import io.bastillion.manage.control.SecureShellKtrl;
 import io.bastillion.manage.db.UserDB;
-import io.bastillion.manage.model.HostSystem;
-import io.bastillion.manage.model.SessionInstances;
-import io.bastillion.manage.model.User;
+import io.bastillion.manage.model.*;
 import io.bastillion.manage.util.CommandLine;
 import io.bastillion.manage.util.SessionOutputUtil;
-import io.bastillion.manage.model.SessionOutput;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,14 +53,16 @@ public class SecureShellTask implements Runnable {
 
     InputStream outFromChannel;
     SessionOutput sessionOutput;
+    SchSession schSession;
 
     // all sessions by sessionId
     private static Map<Long, SessionInstances> allSessions = new ConcurrentHashMap<>();
 
-    public SecureShellTask(SessionOutput sessionOutput, InputStream outFromChannel, Long userId, HostSystem host) {
+    public SecureShellTask(SessionOutput sessionOutput, InputStream outFromChannel, Long userId, HostSystem host, SchSession schSession) {
         this.sessionOutput = sessionOutput;
         this.outFromChannel = outFromChannel;
         addThisInstance(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), userId, host);
+        this.schSession = schSession;
     }
 
     public synchronized void addThisInstance(Long sessionId, Integer instanceId, Long userId, HostSystem host) {
@@ -105,6 +104,22 @@ public class SecureShellTask implements Runnable {
                 if (!appendCommand(buff, 0, read)) {
                     SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), buff, 0, read);
                 }
+
+                if (schSession != null && schSession.getInterrupt()) {
+                    SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), "\n \033[31m Interrupting.... \033[0m");
+                    schSession.getChannel().sendSignal("2");
+                    while ((read = br.read(buff)) != -1) {
+
+                        StringBuilder a = new StringBuilder("");
+                        a.append(buff, 0, read);
+                        if (a.toString().contains("interrupted")) {
+                            SessionOutputUtil.addToOutput(sessionOutput.getSessionId(), sessionOutput.getInstanceId(), "\n \033[32m Interrupted [Press Enter] \033[0m");
+                            break;
+                        }
+                    }
+                    schSession.setInterrupt(false);
+                }
+
                 Thread.sleep(50);
             }
 

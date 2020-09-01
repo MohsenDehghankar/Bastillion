@@ -575,6 +575,7 @@ public class SSHUtil {
             if ("true".equals(AppConfig.getProperty("agentForwarding"))) {
                 ((ChannelShell) channel).setAgentForwarding(true);
             }
+            ((ChannelShell) channel).setPty(true);
             ((ChannelShell) channel).setPtyType("xterm");
 
             InputStream outFromChannel = channel.getInputStream();
@@ -583,7 +584,8 @@ public class SSHUtil {
             //new session output
             SessionOutput sessionOutput = new SessionOutput(sessionId, hostSystem);
 
-            Runnable run = new SecureShellTask(sessionOutput, outFromChannel, userId, hostSystem);
+            schSession = new SchSession();
+            Runnable run = new SecureShellTask(sessionOutput, outFromChannel, userId, hostSystem, schSession);
             Thread thread = new Thread(run);
             thread.start();
 
@@ -594,7 +596,7 @@ public class SSHUtil {
 
             channel.connect();
 
-            schSession = new SchSession();
+
             schSession.setUserId(userId);
             schSession.setSession(session);
             schSession.setChannel(channel);

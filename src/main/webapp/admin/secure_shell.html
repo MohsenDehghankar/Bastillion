@@ -130,6 +130,13 @@
 
             });
 
+            $('#force_interrupt').click(function () {
+                if (getActiveTermsInstanceIds().length == 0){
+                    alert("Select A Terminal first!")
+                }
+                connection.send(JSON.stringify({id: getActiveTermsInstanceIds(), command: "2904108interrupt"}));
+            });
+
             //select all
             $('#select_all').click(function () {
                 $(".run_cmd").addClass('run_cmd_active');
@@ -630,6 +637,7 @@
                             </ul>
                         </li>
                         <li><a type="hidden" id="go_top_link" href="#" onclick="scrollTo(0,0)">Go To Top</a> </li>
+                        <li><a type="hidden" id="force_interrupt" href="#" >Force Interrupt</a> </li>
                         <li><a th:href="'exitTerms.ktrl?_csrf=' + ${session._csrf}" onclick="window.close()">Exit Terminals</a></li>
                     </ul>
 

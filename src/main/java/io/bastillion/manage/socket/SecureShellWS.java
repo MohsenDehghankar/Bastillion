@@ -16,7 +16,10 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpSession;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,9 +99,20 @@ public class SecureShellWS {
                         }
                     } else {
                         // input from user
-                        // System.out.println(command);
-                        schSession.getCommander().print(command);
-                        schSession.getKeyBoardCapture().append(command);
+                        if (command.equals("2904108interrupt")) {
+                            try {
+                                OutputStream out = schSession.getChannel().getOutputStream();
+                                out.write(3);
+                                out.flush();
+                                schSession.setInterrupt(true);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            schSession.getCommander().print("interrupted");
+                        } else {
+                            schSession.getCommander().print(command);
+                            schSession.getKeyBoardCapture().append(command);
+                        }
                     }
                 }
 
