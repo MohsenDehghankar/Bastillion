@@ -130,11 +130,12 @@
 
             });
 
-            $('#force_interrupt').click(function () {
+            $('#force_interrupt').click(function (e) {
                 if (getActiveTermsInstanceIds().length == 0){
                     alert("Select A Terminal first!")
                 }
                 connection.send(JSON.stringify({id: getActiveTermsInstanceIds(), command: "2904108interrupt"}));
+                e.preventDefault();
             });
 
             //select all
