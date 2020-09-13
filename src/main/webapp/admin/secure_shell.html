@@ -209,9 +209,27 @@
             });
 
 
+            var nua = navigator.userAgent;
+            if (nua.indexOf('Android') > -1){
+                $(document).on('input', function (e) {
+                    var inp = e.target.value;
+                    var k = inp.charCodeAt(inp.length - 1);
+                    // alert(k);
+                    if (k && k != 10) {
+                        connection.send(JSON.stringify({
+                            id: getActiveTermsInstanceIds(),
+                            command: inp.charAt(inp.length - 1)
+                        }));
+                    }
+                });
+            }
+
+
             //function for command keys (ie ESC, CTRL, etc..)
             $(document).keydown(function (e) {
                 if (termFocus) {
+                    // alert(e.which);
+
 
                     ids = getActiveTermsInstanceIds();
                     var i;
@@ -220,6 +238,7 @@
                     }
 
                     var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
+                    // alert(keyCode);
                     keys[keyCode] = true;
 
                     if (keys[8] && e.altKey){
@@ -284,6 +303,7 @@
 
             $(document).keyup(function (e) {
                 var keyCode = (e.keyCode) ? e.keyCode : e.charCode;
+                // alert(keyCode);
                 delete keys[keyCode];
                 if (termFocus) {
                     $('#dummy').focus();
